@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Squid Cereal Games</title>
+<meta name="description" content="Squid Cereal Games is a small indie game studio. Two squids, questionable cereal, suspiciously addictive games.">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Fredoka:wght@400;500;600;700&family=Luckiest+Guy&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* Override Bootstrap globals that conflict with our design */
+body { font-family: 'Fredoka', sans-serif !important; background: var(--light) !important; color: var(--dark) !important; line-height: normal !important; overflow-x: hidden; }
+p, h1, h2, h3, h4, h5, h6, ul, ol, dl, dd, figure { margin-bottom: 0; }
+h1, h2, h3, h4, h5, h6 { font-size: inherit; line-height: inherit; font-weight: bold; }
+ul, ol { padding-left: 0; }
+a, a:hover { color: inherit; text-decoration: none; }
+img { vertical-align: baseline; }
+
+/* Bootstrap offcanvas customization via CSS variables */
+.offcanvas {
+  --bs-offcanvas-width: 280px;
+  --bs-offcanvas-border-color: rgba(255,255,255,0.08);
+  --bs-offcanvas-color: var(--dark);
+  --bs-offcanvas-bg: var(--light);
+  border-left: 3px solid var(--blue) !important;
+}
+.offcanvas::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  background-image: var(--hero-texture);
+  background-repeat: repeat;
+  background-size: auto;
+  z-index: -1;
+}
+
+:root {
+  --hero-texture: url("https://squidcereal.com/lines-bg.png");
+  --green: #2db84b;
+  --pink: #e84aa0;
+  --blue: #1e3a6e;
+  --dark: #1a1a2e;
+  --light: #f8f7f4;
+  --grey: #b0aead;
+}
+
+html { scroll-behavior: smooth; }
+
+
+/* subtle texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+section { position: relative; z-index: 1; }
+
+/* ===== STATIC TOP LINKS (visible before scroll) ===== */
+.top-links {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 90;
+  display: flex; justify-content: flex-end; align-items: center;
+  padding: 1rem 3rem;
+  transition: opacity 0.3s;
+}
+.top-links.hidden { opacity: 0; pointer-events: none; }
+.top-links ul { display: none; }
+.top-links .mobile-hamburger { display: block; }
+
+/* ===== NAV BAR (slides down on scroll) ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.6rem 3rem;
+  background: rgba(26,26,46,0.95);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transform: translateY(-100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+nav.visible { transform: translateY(0); }
+nav .nav-brand {
+  display: flex; align-items: center; gap: 1.2rem;
+  text-decoration: none;
+  position: relative;
+}
+nav .nav-logo-wrap {
+  position: relative;
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+}
+nav .nav-blob {
+  position: absolute;
+  width: 42px; height: 42px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
+  animation: navBlobMove 4s ease-in-out infinite;
+}
+@keyframes navBlobMove {
+  0%,100% { border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%; }
+  50% { border-radius: 40% 60% 50% 50% / 60% 40% 50% 50%; }
+}
+nav .nav-logo {
+  height: 30px;
+  width: auto;
+  position: relative; z-index: 1;
+}
+nav .nav-title {
+  font-family: 'Luckiest Guy', sans-serif;
+  font-size: 1.6rem;
+  word-spacing: 3px;
+}
+nav .nav-title .t1 { color: #fff; }
+nav .nav-title .t2 { color: var(--green); }
+nav .nav-title .t3 { color: rgba(255,255,255,0.15); font-size: 0.5em; vertical-align: baseline; margin-left: 3px; }
+nav ul { list-style: none; display: none; gap: 2rem; }
+nav ul a {
+  text-decoration: none;
+  color: var(--dark);
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 8px;
+  border: none;
+  background: #5b8bd4;
+  transition: transform 0.3s ease, border-radius 0.3s ease;
+  display: inline-block;
+}
+nav ul a.blob-intro {
+  animation: navBlobIntro 0.3s ease-out forwards !important;
+  background: var(--green);
+}
+nav ul a.blobbing {
+  animation: blobWobble 1.8s ease-in-out infinite !important;
+  background: var(--green);
+}
+nav ul a.settling {
+  animation: navBlobSettle 0.3s ease-out both !important;
+}
+@keyframes navBlobIntro {
+  0%   { border-radius: 8px; }
+  100% { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
+}
+@keyframes navBlobSettle {
+  0%   { border-radius: 55% 38% 60% 42% / 35% 55% 45% 60%; }
+  100% { border-radius: 8px; }
+}
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative;
+  text-align: center;
+  padding: 6rem 2rem 4rem;
+  position: relative;
+  background: var(--light) var(--hero-texture) repeat center/auto;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 60px 10px rgba(0,0,0,0.3);
+  pointer-events: none;
+  z-index: 1;
+}
+.hero-logo {
+  width: min(160px, 55vw);
+  margin-bottom: 1.5rem;
+  animation: jellyDrop 1s 0.1s both;
+  filter: drop-shadow(0 6px 20px rgba(0,0,0,0.08));
+  transform-origin: bottom center;
+}
+@keyframes jellyDrop {
+  0%   { opacity: 0; transform: translateY(-180px) scaleX(0.85) scaleY(1.15); }
+  30%  { opacity: 1; transform: translateY(0) scaleX(0.85) scaleY(1.15); }
+  40%  { transform: translateY(0) scaleX(1.25) scaleY(0.7); }
+  50%  { transform: translateY(-30px) scaleX(0.9) scaleY(1.1); }
+  60%  { transform: translateY(0) scaleX(1.1) scaleY(0.85); }
+  70%  { transform: translateY(-10px) scaleX(0.95) scaleY(1.05); }
+  80%  { transform: translateY(0) scaleX(1.04) scaleY(0.95); }
+  90%  { transform: translateY(-3px) scaleX(0.98) scaleY(1.02); }
+  100% { opacity: 1; transform: translateY(0) scaleX(1) scaleY(1); }
+}
+@keyframes jellyText {
+  0%   { opacity: 0; transform: translateY(-120px) scaleX(0.9) scaleY(1.1); }
+  25%  { opacity: 1; transform: translateY(0) scaleX(0.9) scaleY(1.1); }
+  38%  { transform: translateY(0) scaleX(1.2) scaleY(0.75); }
+  50%  { transform: translateY(-18px) scaleX(0.92) scaleY(1.08); }
+  62%  { transform: translateY(0) scaleX(1.08) scaleY(0.9); }
+  72%  { transform: translateY(-6px) scaleX(0.97) scaleY(1.03); }
+  82%  { transform: translateY(0) scaleX(1.02) scaleY(0.98); }
+  100% { opacity: 1; transform: translateY(0) scaleX(1) scaleY(1); }
+}
+@keyframes jellyPop {
+  0%   { opacity: 0; transform: scale(0) rotate(-8deg); }
+  40%  { opacity: 1; transform: scale(1.2) rotate(3deg); }
+  55%  { transform: scale(0.85) rotate(-2deg); }
+  70%  { transform: scale(1.08) rotate(1deg); }
+  82%  { transform: scale(0.96) rotate(0deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.hero h1 {
+  font-family: 'Luckiest Guy', sans-serif;
+  font-size: clamp(2.5rem, 6vw, 4.2rem);
+  line-height: 0.9;
+  animation: jellyText 0.9s 0.35s both;
+  transform-origin: bottom center;
+}
+.hero h1 .w1 { color: var(--blue); }
+.hero h1 .w2 { color: var(--green); }
+.hero-games-label {
+  font-family: 'Luckiest Guy', sans-serif;
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: rgba(0,0,0,0.2);
+  letter-spacing: 0;
+  text-align: right;
+  margin-top: -0.1rem;
+  text-transform: uppercase;
+}
+.hero .tagline {
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  color: var(--grey);
+  margin-top: 1.5rem;
+  font-weight: 500;
+  animation: jellyText 0.9s 0.55s both;
+  transform-origin: bottom center;
+}
+.tagline.loaded {
+  animation: none;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+.tagline.slide-out {
+  transform: translateX(-80px);
+  opacity: 0;
+}
+.tagline.slide-in-prep {
+  transform: translateX(80px);
+  opacity: 0;
+  transition: none !important;
+}
+.tagline.slide-in {
+  transform: translateX(0);
+  opacity: 1;
+}
+.hero .cta {
+  margin-top: 2.5rem;
+  display: inline-block;
+  padding: 1rem 2.8rem;
+  background: var(--pink);
+  color: #fff;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border: none; border-radius: 60px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  animation: jellyPop 0.8s 0.75s both;
+}
+.cta.loaded { animation: none; }
+.cta.blob-intro {
+  animation: ctaIntro 0.35s ease-out both !important;
+}
+.cta.blobbing {
+  animation: blobWobble 1.8s ease-in-out infinite !important;
+  transform: scale(1.12);
+}
+.cta.settling {
+  animation: ctaSettle 0.35s ease-out both !important;
+}
+@keyframes ctaIntro {
+  from { border-radius: 60px; }
+  to   { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
+}
+@keyframes blobWobble {
+  0%   { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
+  14%  { border-radius: 40% 55% 35% 65% / 60% 38% 58% 42%; }
+  28%  { border-radius: 55% 35% 60% 40% / 38% 55% 42% 60%; }
+  42%  { border-radius: 35% 60% 42% 58% / 55% 42% 60% 38%; }
+  57%  { border-radius: 58% 42% 55% 38% / 42% 60% 38% 55%; }
+  71%  { border-radius: 42% 58% 38% 55% / 58% 35% 55% 45%; }
+  85%  { border-radius: 55% 38% 60% 42% / 35% 55% 45% 60%; }
+  100% { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
+}
+@keyframes ctaSettle {
+  from { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
+  to   { border-radius: 60px; }
+}
+@keyframes navIntro {
+  from { border-radius: 8px; }
+  to   { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
+}
+@keyframes navSettle {
+  from { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
+  to   { border-radius: 8px; }
+}
+
+/* ===== ABOUT ===== */
+.about-wrap {
+  background: var(--blue);
+  position: relative; z-index: 1;
+}
+.about {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4rem; align-items: center;
+  max-width: 1200px; margin: 0 auto;
+  padding: 8rem 3rem;
+}
+.about .text-col h2 {
+  font-family: 'Fredoka', sans-serif; font-weight: 700;
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  color: var(--green);
+  margin-bottom: 1.2rem;
+}
+.about .text-col p {
+  font-size: 1.1rem; line-height: 1.75; color: rgba(255,255,255,0.7); max-width: 480px; margin-bottom: 1rem;
+}
+.about .visual-col {
+  display: flex; justify-content: center; align-items: center;
+  position: relative;
+}
+.about .visual-col .blob {
+  width: 360px; height: 360px;
+  background: linear-gradient(135deg, rgba(45,184,75,0.15), rgba(232,74,160,0.1));
+  border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
+  position: absolute;
+  animation: blobMove 8s ease-in-out infinite;
+}
+@keyframes blobMove {
+  0%,100% { border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%; }
+  50% { border-radius: 40% 60% 50% 50% / 60% 40% 50% 50%; }
+}
+.about .visual-col .tentacle-icon {
+  font-size: 8rem; position: relative; z-index: 1;
+}
+
+/* ===== GAMES ===== */
+.games-wrap {
+  background: #f0efe9;
+  position: relative; z-index: 1;
+}
+.games {
+  padding: 8rem 3rem;
+  max-width: 1200px; margin: 0 auto;
+  text-align: center;
+}
+.games h2 {
+  font-family: 'Fredoka', sans-serif; font-weight: 700;
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  color: var(--blue);
+  margin-bottom: 0.6rem;
+}
+.games .games-sub { color: #999; font-size: 1.05rem; margin-bottom: 3.5rem; }
+.games-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+.game-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  border: none;
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), background 0.35s;
+  cursor: pointer;
+  position: relative; overflow: hidden;
+}
+.game-card::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(232,74,160,0.04), rgba(45,184,75,0.04));
+  opacity: 0; transition: opacity 0.3s;
+}
+.game-card:hover { transform: translateY(-4px) translateX(2px); background: var(--blue); color: #fff; }
+.game-card:hover h3 { color: #fff; }
+.game-card:hover p { color: rgba(255,255,255,0.7); }
+.game-card:hover .tag { background: rgba(255,255,255,0.15); color: #fff; }
+.game-card:hover .card-icon { filter: grayscale(0); }
+.game-card:hover::after { opacity: 0; }
+.game-card .card-icon { font-size: 3rem; margin-bottom: 1rem; }
+.game-card h3 {
+  font-family: 'Fredoka', sans-serif; font-weight: 700;
+  font-size: 1.4rem; color: var(--blue); margin-bottom: 0.6rem;
+}
+.game-card p { color: #777; font-size: 0.95rem; line-height: 1.6; }
+.game-card .tag {
+  display: inline-block; margin-top: 1rem;
+  padding: 0.3rem 0.9rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 600;
+  background: rgba(45,184,75,0.1); color: var(--green);
+}
+
+/* ===== TEAM ===== */
+.team {
+  padding: 8rem 3rem;
+  background: var(--dark);
+  position: relative; z-index: 1;
+  overflow: hidden;
+}
+.team-inner {
+  max-width: 1100px; margin: 0 auto; text-align: center;
+}
+.team h2 {
+  font-family: 'Fredoka', sans-serif; font-weight: 700;
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  color: var(--pink);
+  margin-bottom: 0.6rem;
+}
+.team .sub { color: rgba(255,255,255,0.45); font-size: 1.05rem; margin-bottom: 3.5rem; }
+.team-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+.team-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  text-align: left;
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), background 0.3s;
+  position: relative; overflow: hidden;
+}
+.team-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255,255,255,0.07);
+}
+.team-card .emoji {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  display: block;
+  text-align: center;
+  animation: wobble 3s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes wobble {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(6deg) scale(1.05); }
+  75% { transform: rotate(-6deg) scale(1.05); }
+}
+.team-card h4 {
+  font-family: 'Fredoka', sans-serif; font-weight: 700;
+  font-size: 1.3rem;
+  color: #fff;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+.squid-title {
+  font-weight: 400;
+  font-size: 0.65em;
+  opacity: 0.5;
+  font-style: italic;
+  display: block;
+  margin-top: 0.2rem;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+.squid-title.slide-out {
+  transform: translateX(-40px) !important;
+  opacity: 0 !important;
+}
+.squid-title.slide-in-prep {
+  transform: translateX(40px) !important;
+  opacity: 0 !important;
+  transition: none !important;
+}
+.squid-title.slide-in {
+  transform: translateX(0) !important;
+  opacity: 0.5 !important;
+  transition: transform 0.35s ease, opacity 0.35s ease !important;
+}
+.team-card p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 0.8rem;
+}
+.team-card .interests-label {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  color: var(--green);
+  margin-top: 1.2rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+.team-card .interests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.team-card .interests span {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.45);
+  font-weight: 500;
+}
+
+.team-card.light p em { font-style: italic; color: rgba(45,184,75,0.8); }
+.team-card.light p strong { font-weight: 600; color: rgba(255,255,255,0.75); }
+.team-card.dark p em { font-style: italic; color: rgba(232,74,160,0.8); }
+.team-card.dark p strong { font-weight: 600; color: rgba(255,255,255,0.7); }
+
+.team-card.dark .emoji {
+  filter: grayscale(1) sepia(1) hue-rotate(275deg) saturate(3.5) brightness(0.85);
+}
+.team-card.light .emoji {
+  filter: grayscale(1) sepia(1) hue-rotate(75deg) saturate(3) brightness(0.9);
+}
+
+/* Light squid — warm, hopeful */
+.team-card.light {
+  background: rgba(45,184,75,0.06);
+  border-color: rgba(45,184,75,0.15);
+  box-shadow: 0 0 30px rgba(45,184,75,0.06), inset 0 0 40px rgba(45,184,75,0.03);
+}
+.team-card.light:hover {
+  background: rgba(45,184,75,0.1);
+  box-shadow: 0 0 40px rgba(45,184,75,0.1), inset 0 0 50px rgba(45,184,75,0.05);
+}
+.team-card.light h4 { color: var(--green); }
+.team-card.light p { color: rgba(255,255,255,0.55); }
+.team-card.light .interests-label { color: var(--green); }
+.team-card.light .interests span {
+  background: rgba(45,184,75,0.1);
+  color: var(--green);
+}
+
+/* Dark squid — ominous, scheming */
+.team-card.dark {
+  background: rgba(232,74,160,0.08);
+  border-color: rgba(232,74,160,0.2);
+  box-shadow: 0 0 30px rgba(232,74,160,0.06), inset 0 0 40px rgba(232,74,160,0.03);
+}
+.team-card.dark:hover {
+  background: rgba(232,74,160,0.12);
+  box-shadow: 0 0 40px rgba(232,74,160,0.1), inset 0 0 50px rgba(232,74,160,0.05);
+}
+.team-card.dark h4 { color: var(--pink); }
+.team-card.dark p { color: rgba(255,255,255,0.45); }
+.team-card.dark .interests-label { color: var(--pink); }
+.team-card.dark .interests span {
+  background: rgba(232,74,160,0.1);
+  color: var(--pink);
+}
+
+/* ===== FOOTER ===== */
+footer {
+  padding: 4rem 3rem 2.5rem;
+  background: #111122;
+  position: relative; z-index: 1;
+  text-align: center;
+}
+footer .footer-logo { width: 60px; margin-bottom: 1.2rem; opacity: 0.5; }
+footer .socials {
+  display: flex; justify-content: center; gap: 1.2rem; margin-bottom: 1.5rem;
+}
+footer .socials a {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none; font-size: 1rem;
+  color: rgba(255,255,255,0.4);
+  transition: border-color 0.2s, color 0.2s, transform 0.2s;
+}
+footer .socials a:hover { border-color: var(--green); color: var(--green); transform: scale(1.1); }
+footer .copy {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.2);
+  font-family: 'Fredoka', sans-serif;
+}
+footer .copy span { color: var(--green); }
+
+/* ===== SCROLL ANIMATIONS ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal.from-left { transform: translateX(-40px); }
+.reveal.from-right { transform: translateX(40px); }
+.reveal.visible {
+  opacity: 1;
+  transform: translate(0,0);
+}
+
+/* stagger children */
+.stagger > * { transition-delay: calc(var(--i,0) * 0.1s); }
+
+/* ===== MOBILE MENU ===== */
+.mobile-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0;
+}
+nav .mobile-hamburger {
+  display: block;
+}
+.mobile-hamburger .navbar-toggler-icon {
+  display: block;
+  width: 2em;
+  height: 2em;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2830, 58, 110, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+nav .mobile-hamburger .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.offcanvas .offcanvas-header {
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 1.5rem;
+}
+.offcanvas .offcanvas-header .btn-close {
+  opacity: 0.5;
+}
+.offcanvas .offcanvas-body {
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.offcanvas .offcanvas-body a {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--pink);
+  transition: background 0.2s;
+}
+.offcanvas .offcanvas-body a:hover {
+  background: var(--green);
+}
+
+@media (min-width: 1920px) {
+  .hero-logo { width: 220px; }
+  .hero h1 { font-size: 5.5rem; }
+  .hero .tagline { font-size: 1.8rem; }
+  .hero .cta { font-size: 1.4rem; padding: 1.2rem 3.5rem; }
+  .hero-games-label { font-size: 1rem; }
+  .top-links ul a { font-size: 1.1rem; }
+  .team-card p { font-size: 1.05rem; }
+  .team-card h4 { font-size: 1.5rem; }
+}
+@media (max-width: 1200px) {
+  .games-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
+}
+@media (max-width: 768px) {
+  nav { padding: 0.5rem 1.5rem; }
+  .top-links { padding: 1rem 1.5rem; }
+  .about { grid-template-columns: 1fr; text-align: center; padding: 5rem 2rem; }
+  .about .text-col p { margin: 0 auto; }
+  .games { padding: 5rem 2rem; }
+  .team { padding: 5rem 2rem; }
+  footer { padding: 3rem 2rem; }
+  .team-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+}
+</style>
+</head>
+<body>
+
+<nav class="top-links" id="topLinks" aria-label="Primary navigation">
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#games">Our Games</a></li>
+    <li><a href="#team">The Deep Ones</a></li>
+  </ul>
+  <button class="mobile-hamburger" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-label="Menu">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+</nav>
+
+<nav id="navBar" aria-label="Scroll navigation">
+  <a href="#" class="nav-brand">
+    <span class="nav-title"><span class="t1">Squid </span><span class="t2">Cereal</span> <span class="t3">Games</span></span>
+  </a>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#games">Our Games</a></li>
+    <li><a href="#team">The Deep Ones</a></li>
+  </ul>
+  <button class="mobile-hamburger" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-label="Menu">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+</nav>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu" aria-label="Mobile navigation">
+  <div class="offcanvas-header">
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <a href="#about" data-bs-dismiss="offcanvas">About</a>
+    <a href="#games" data-bs-dismiss="offcanvas">Our Games</a>
+    <a href="#team" data-bs-dismiss="offcanvas">The Deep Ones</a>
+    <img src="https://squidcereal.com/logo.png" alt="Squid Cereal logo" style="width:60px;margin-top:4rem;align-self:center;opacity:0.85;">
+  </div>
+</div>
+
+<main>
+<section class="hero">
+  <img src="https://squidcereal.com/logo.png" alt="Squid Cereal logo" class="hero-logo">
+  <div class="hero-title-wrap" style="display: inline-block;">
+    <h1><span class="w1">Squid </span><span class="w2">Cereal</span></h1>
+    <div class="hero-games-label" style="animation: jellyText 0.9s 0.45s both; transform-origin: bottom center;">Games</div>
+  </div>
+  <p class="tagline" id="tagline"></p>
+  <a href="#games" class="cta">See Our Games</a>
+</section>
+
+<section class="about-wrap" id="about">
+  <div class="about">
+    <div class="text-col reveal from-left">
+      <h2>Who We Are</h2>
+      <p>Dark water, strange currents, and two squids with ideas. Then came the cereal — and with it, a new kind of hunger. To make games that are fun. The kind you didn't know you were looking for until you found them.</p>
+      <p>Just a small studio in Toronto, Canada. Not the biggest in the ocean — but maybe the one you're glad you found.</p>
+    </div>
+    <div class="visual-col reveal from-right">
+      <div class="blob" aria-hidden="true"></div>
+      <div class="tentacle-icon" aria-hidden="true">🦑</div>
+    </div>
+  </div>
+</section>
+
+<section class="games-wrap" id="games">
+  <div class="games">
+    <h2 class="reveal">Our Games</h2>
+    <p class="games-sub reveal">Questionable ingredients. Suspiciously addictive.</p>
+    <div class="games-grid stagger">
+      <article class="game-card reveal" style="--i:0">
+        <div class="card-icon" aria-hidden="true">🌊</div>
+        <h3>Depth Crunch</h3>
+        <p>A deep-sea puzzle-platformer where breakfast is the only weapon against the abyss.</p>
+        <span class="tag">Coming Soon</span>
+      </article>
+      <article class="game-card reveal" style="--i:1">
+        <div class="card-icon" aria-hidden="true">🥣</div>
+        <h3>Bowl of Chaos</h3>
+        <p>Multiplayer mayhem in a cereal bowl. Four players, eight tentacles, one spoon.</p>
+        <span class="tag">In Development</span>
+      </article>
+      <article class="game-card reveal" style="--i:2">
+        <div class="card-icon" aria-hidden="true">🎮</div>
+        <h3>Ink & Milk</h3>
+        <p>A narrative adventure about an octopus who just wants a normal morning.</p>
+        <span class="tag">Prototype</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="team" id="team">
+  <div class="team-inner">
+    <h2 class="reveal">The Deep Ones</h2>
+    <p class="sub reveal">One shared dream of tentacle-based entertainment.</p>
+    <div class="team-grid stagger">
+      <article class="team-card dark reveal" style="--i:0">
+        <span class="emoji" aria-hidden="true" style="--d:0s">🦑</span>
+        <h4>Kales <span class="squid-title">Keeper of the First Bowl</span></h4>
+        <p>Crawled out of the deep sea one morning with <em>a heart full of hope</em> and a tentacle wrapped around the world's most ambitious game design doc. Believes that every bowl of cereal deserves a story — <strong>no bowl should ever go unfinished, and every tentacle should leave a mark</strong>.</p>
+        <p>Fueled entirely by coffee and an unshakeable belief that <em>squid-based cereal products are the untapped frontier</em> of interactive entertainment. Will talk your ear off about level flow, color theory, and why <strong>a well-written side quest is worth more than sleep</strong>.</p>
+        <p>Currently on a <em>one-squid mission</em> to prove that games can make the world a little warmer, a little weirder, and <strong>a lot more fun</strong> — one tentacle at a time.</p>
+        <div class="interests-label">Obsessions</div>
+        <div class="interests">
+          <span>Coffee</span>
+          <span>Adventure Games</span>
+          <span>Puzzles</span>
+          <span>RPGs</span>
+          <span>Cereal R&D</span>
+        </div>
+      </article>
+      <article class="team-card light reveal" style="--i:1">
+        <span class="emoji" aria-hidden="true" style="--d:0.5s">🦑</span>
+        <h4>Klodin <span class="squid-title" id="klodinTitle">Deepwrought</span></h4>
+        <p>Surfaced from <em>waters unknown</em> with a spreadsheet in every tentacle and a five-phase plan for <strong>total market dominance</strong>. Where others see a cereal bowl, Klodin sees <em>a throne</em>. Where others see a game, Klodin sees a <strong>weapon of mass entertainment</strong>.</p>
+        <p>Spends most waking hours optimizing systems that don't need optimizing, <em>min-maxing things that were never meant to be min-maxed</em>, and muttering about "the endgame." Has never once used the word <strong>"enough"</strong> without laughing.</p>
+        <p>Has been inking <em>cryptic diagrams</em> on the ocean floor that only make sense if you read them upside down in the dark. The tides have been behaving strangely. <strong>Everything is going according to plan.</strong></p>
+        <div class="interests-label">Schemes</div>
+        <div class="interests">
+          <span>World Domination</span>
+          <span>Roguelikes</span>
+          <span>Deck Builders</span>
+          <span>Automation</span>
+          <span>Resource Management</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <p class="copy">&copy; 2026 Squid Cereal &mdash; Made with ink, milk &amp; good intentions.</p>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+const navBar = document.getElementById('navBar');
+const topLinks = document.getElementById('topLinks');
+const heroEl = document.querySelector('.hero');
+
+window.addEventListener('scroll', () => {
+  const scrollThreshold = heroEl.offsetHeight * 0.35;
+  if (window.scrollY > scrollThreshold) {
+    navBar.classList.add('visible');
+    topLinks.classList.add('hidden');
+  } else {
+    navBar.classList.remove('visible');
+    topLinks.classList.remove('hidden');
+  }
+}, { passive: true });
+
+const ctaEl = document.querySelector('.cta');
+ctaEl.addEventListener('animationend', function(e) {
+  if (e.animationName === 'jellyPop') this.classList.add('loaded');
+});
+
+function setupBlobHover(el, introName, settleName) {
+  el.addEventListener('animationend', function(e) {
+    if (e.animationName === introName) {
+      this.classList.remove('blob-intro');
+      this.classList.add('blobbing');
+    }
+    if (e.animationName === settleName) {
+      this.classList.remove('settling');
+    }
+  });
+  el.addEventListener('mouseenter', function() {
+    if (this.classList.contains('cta') && !this.classList.contains('loaded')) return;
+    this.classList.remove('settling', 'blobbing');
+    this.classList.add('blob-intro');
+  });
+  el.addEventListener('mouseleave', function() {
+    if (this.classList.contains('cta') && !this.classList.contains('loaded')) return;
+    this.classList.remove('blob-intro', 'blobbing');
+    this.classList.add('settling');
+  });
+}
+
+setupBlobHover(ctaEl, 'ctaIntro', 'ctaSettle');
+document.querySelectorAll('nav ul a').forEach(a => setupBlobHover(a, 'navBlobIntro', 'navBlobSettle'));
+
+(function() {
+  const taglines = [
+    "Completely off the deep end.",
+    "16 arms, 4 tentacles, Zero chill.",
+    "Going against the current.",
+    "We kraken ourselves up.",
+    "Allegedly part of a balanced breakfast.",
+    "Nutritional value: Unknown",
+    "Contents under pressure.",
+    "Now with 50% more tentacles!",
+    "Free toy inside!",
+    "Overflowing with ideas. Mostly milk.",
+    "Ink first. Think later.",
+    "Making waves in the cereal aisle.",
+    "Tentacles firmly on the pulse.",
+    "Looming in the deep."
+  ];
+  const el = document.getElementById('tagline');
+  el.addEventListener('animationend', function(e) {
+    if (e.animationName === 'jellyText') this.classList.add('loaded');
+  }, { once: true });
+
+  let queue = [];
+  function shuffle() {
+    queue = [...taglines].sort(() => Math.random() - 0.5);
+  }
+  shuffle();
+  el.textContent = queue.pop();
+
+  setInterval(() => {
+    if (queue.length === 0) shuffle();
+    const next = queue.pop();
+
+    el.classList.add('slide-out');
+    setTimeout(() => {
+      el.textContent = next;
+      el.classList.remove('slide-out');
+      el.classList.add('slide-in-prep');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.classList.remove('slide-in-prep');
+          el.classList.add('slide-in');
+          setTimeout(() => el.classList.remove('slide-in'), 500);
+        });
+      });
+    }, 500);
+  }, 6000);
+})();
+
+(function() {
+  const titles = [
+    "Deepwrought",
+    "Breaker of Masts",
+    "the Abyssal Architect",
+    "Sovereign of the Sunken Throne",
+    "Inker of Forbidden Diagrams",
+    "He Whose Tide Does Not Recede",
+    "Warden of the Crushing Deep",
+    "Rightful Ruler of All Drowned Kingdoms",
+    "The Deep's Own Design",
+    "He Who Waits Below",
+    "The Last Fathom",
+    "Scourge of Every Charted Sea"
+  ];
+  const el = document.getElementById('klodinTitle');
+  let queue = [];
+  function shuffle() {
+    queue = [...titles].sort(() => Math.random() - 0.5);
+  }
+  shuffle();
+
+  setInterval(() => {
+    if (queue.length === 0) shuffle();
+    const next = queue.pop();
+
+    el.classList.add('slide-out');
+    setTimeout(() => {
+      el.textContent = next;
+      el.classList.remove('slide-out');
+      el.classList.add('slide-in-prep');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.classList.remove('slide-in-prep');
+          el.classList.add('slide-in');
+          setTimeout(() => el.classList.remove('slide-in'), 350);
+        });
+      });
+    }, 350);
+  }, 2500);
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
