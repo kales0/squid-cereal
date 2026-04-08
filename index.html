@@ -64,7 +64,7 @@ section { position: relative; z-index: 1; }
 
 /* ===== STATIC TOP LINKS (visible before scroll) ===== */
 .top-links {
-  position: absolute; top: 0; left: 0; right: 0; z-index: 90;
+  position: fixed; top: 0; right: 0; z-index: 200;
   display: flex; justify-content: flex-end; align-items: center;
   padding: 1rem 3rem;
   transition: opacity 0.3s;
@@ -159,8 +159,7 @@ nav ul a.settling {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   position: relative;
   text-align: center;
-  padding: 6rem 2rem 4rem;
-  position: relative;
+  padding: 2rem;
   background: var(--light) var(--hero-texture) repeat center/auto;
 }
 .hero::after {
@@ -253,9 +252,12 @@ nav ul a.settling {
 }
 .hero .cta {
   margin-top: 2.5rem;
+  /* Above title: logo+gap ≈ 11.5rem. Below title: label+tagline+CTA ≈ 8rem.
+     3.5rem margin balances the difference so flexbox centers on the title. */
+  margin-bottom: 2rem;
   display: inline-block;
   padding: 1rem 2.8rem;
-  background: var(--pink);
+  background: #e84ab2;
   color: #fff;
   font-family: 'Fredoka', sans-serif;
   font-size: 1.15rem;
@@ -642,7 +644,7 @@ nav .mobile-hamburger .navbar-toggler-icon {
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  background: var(--pink);
+  background: #e84ab2;
   transition: background 0.2s;
 }
 .offcanvas .offcanvas-body a:hover {
@@ -672,11 +674,19 @@ nav .mobile-hamburger .navbar-toggler-icon {
   footer { padding: 3rem 2rem; }
   .team-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
 }
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero { min-height: 100vh; padding: 1.5rem 2rem 2rem; }
+  .hero-logo { width: 60px; margin-bottom: 0.5rem; }
+  .hero h1 { font-size: 2rem; }
+  .hero-games-label { font-size: 0.6rem; }
+  .hero .tagline { font-size: 0.9rem; margin-top: 0.3rem; }
+  .hero .cta { margin-top: 1rem; margin-bottom: 0; padding: 0.6rem 2rem; font-size: 0.9rem; }
+}
 </style>
 </head>
 <body>
 
-<nav class="top-links" id="topLinks" aria-label="Primary navigation">
+<div class="top-links" id="topLinks" role="navigation" aria-label="Primary navigation">
   <ul>
     <li><a href="#about">About</a></li>
     <li><a href="#games">Our Games</a></li>
@@ -685,7 +695,7 @@ nav .mobile-hamburger .navbar-toggler-icon {
   <button class="mobile-hamburger" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-label="Menu">
     <span class="navbar-toggler-icon"></span>
   </button>
-</nav>
+</div>
 
 <nav id="navBar" aria-label="Scroll navigation">
   <a href="#" class="nav-brand">
