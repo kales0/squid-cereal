@@ -47,7 +47,7 @@ img { vertical-align: baseline; }
   --grey: #b0aead;
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 
 
 /* subtle texture */
@@ -60,7 +60,7 @@ body::before {
   z-index: 0;
 }
 
-section { position: relative; z-index: 1; }
+section { position: relative; z-index: 1; overflow: clip; }
 
 /* ===== STATIC TOP LINKS (visible before scroll) ===== */
 .top-links {
