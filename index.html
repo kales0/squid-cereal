@@ -47,7 +47,7 @@ img { vertical-align: baseline; }
   --grey: #b0aead;
 }
 
-html { scroll-behavior: smooth; overflow-x: hidden; }
+html { scroll-behavior: smooth; }
 
 
 /* subtle texture */
@@ -60,7 +60,7 @@ body::before {
   z-index: 0;
 }
 
-section { position: relative; z-index: 1; overflow: clip; }
+section { position: relative; z-index: 1; overflow-x: clip; }
 
 /* ===== STATIC TOP LINKS (visible before scroll) ===== */
 .top-links {
@@ -711,14 +711,14 @@ nav .mobile-hamburger .navbar-toggler-icon {
   </button>
 </nav>
 
-<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu" aria-label="Mobile navigation">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu" aria-label="Mobile navigation" data-bs-scroll="true">
   <div class="offcanvas-header">
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
-    <a href="#about" data-bs-dismiss="offcanvas">About</a>
-    <a href="#games" data-bs-dismiss="offcanvas">Our Games</a>
-    <a href="#team" data-bs-dismiss="offcanvas">The Deep Ones</a>
+    <a href="#about" class="offcanvas-link">About</a>
+    <a href="#games" class="offcanvas-link">Our Games</a>
+    <a href="#team" class="offcanvas-link">The Deep Ones</a>
     <img src="https://squidcereal.com/logo.png" alt="Squid Cereal logo" style="width:60px;margin-top:4rem;align-self:center;opacity:0.85;">
   </div>
 </div>
@@ -967,5 +967,12 @@ document.querySelectorAll('nav ul a').forEach(a => setupBlobHover(a, 'navBlobInt
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script>
+const mobileMenu = document.getElementById('mobileMenu');
+const bsOffcanvas = new bootstrap.Offcanvas(mobileMenu);
+document.querySelectorAll('.offcanvas-link').forEach(link => {
+  link.addEventListener('click', () => bsOffcanvas.hide());
+});
+</script>
 </body>
 </html>
