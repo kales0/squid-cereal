@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Squid Cereal Games</title>
 <meta name="description" content="Squid Cereal Games is a small indie game studio. Questionable ingredients, suspiciously addictive games.">
-<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Fredoka:wght@400;500;600;700&family=Luckiest+Guy&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Luckiest+Guy&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -99,12 +99,12 @@ nav .nav-blob {
   position: absolute;
   width: 42px; height: 42px;
   background: rgba(255,255,255,0.9);
-  40% { border-radius: 55% 45% 50% 55% / 65% 50% 40% 55%; }
+  border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%;
   animation: navBlobMove 4s ease-in-out infinite;
 }
 @keyframes navBlobMove {
-  40% { border-radius: 55% 45% 50% 55% / 65% 50% 40% 55%; }
-  40% { border-radius: 55% 45% 50% 55% / 65% 50% 40% 55%; }
+  0%,100% { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
+  50% { border-radius: 40% 60% 45% 55% / 55% 40% 60% 45%; }
 }
 nav .nav-logo {
   height: 30px;
@@ -144,15 +144,6 @@ nav ul a.blobbing {
 nav ul a.settling {
   animation: navBlobSettle 0.3s ease-out both !important;
 }
-@keyframes navBlobIntro {
-  0%   { border-radius: 8px; }
-  40% { border-radius: 55% 45% 50% 55% / 65% 50% 40% 55%; }
-}
-@keyframes navBlobSettle {
-  60% { border-radius: 65% 45% 45% 55% / 45% 60% 55% 40%; }
-  100% { border-radius: 8px; }
-}
-
 /* ===== HERO ===== */
 .hero {
   min-height: 100vh;
@@ -160,7 +151,17 @@ nav ul a.settling {
   position: relative;
   text-align: center;
   padding: 2rem;
+  overflow: hidden;
   background: var(--light) var(--hero-texture) repeat center/auto;
+}
+.bubble {
+  position: absolute;
+  bottom: -20px;
+  border-radius: 50%;
+  background: #37548a;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
 }
 .hero::after {
   content: '';
@@ -170,6 +171,7 @@ nav ul a.settling {
   pointer-events: none;
   z-index: 1;
 }
+.hero > *:not(.bubble) { position: relative; z-index: 5; }
 .hero-logo {
   width: min(160px, 55vw);
   margin-bottom: 1.5rem;
@@ -180,11 +182,11 @@ nav ul a.settling {
 @keyframes jellyDrop {
   0%   { opacity: 0; transform: translateY(-180px) scaleX(0.85) scaleY(1.15); }
   30%  { opacity: 1; transform: translateY(0) scaleX(0.85) scaleY(1.15); }
-  40% { border-radius: 55% 45% 50% 55% / 65% 50% 40% 55%; }
+  40%  { transform: translateY(0) scaleX(1.25) scaleY(0.7); }
   50%  { transform: translateY(-30px) scaleX(0.9) scaleY(1.1); }
-  60% { border-radius: 65% 45% 45% 55% / 45% 60% 55% 40%; }
+  60%  { transform: translateY(0) scaleX(1.08) scaleY(0.9); }
   70%  { transform: translateY(-10px) scaleX(0.95) scaleY(1.05); }
-  80% { border-radius: 50% 55% 60% 45% / 40% 45% 65% 55%; }
+  80%  { transform: translateY(0) scaleX(1.02) scaleY(0.98); }
   90%  { transform: translateY(-3px) scaleX(0.98) scaleY(1.02); }
   100% { opacity: 1; transform: translateY(0) scaleX(1) scaleY(1); }
 }
@@ -200,7 +202,7 @@ nav ul a.settling {
 }
 @keyframes jellyPop {
   0%   { opacity: 0; transform: scale(0) rotate(-8deg); }
-  40% { border-radius: 55% 45% 50% 55% / 65% 50% 40% 55%; }
+  40%  { opacity: 1; transform: scale(1.2) rotate(3deg); }
   55%  { transform: scale(0.85) rotate(-2deg); }
   70%  { transform: scale(1.08) rotate(1deg); }
   82%  { transform: scale(0.96) rotate(0deg); }
@@ -252,8 +254,7 @@ nav ul a.settling {
 }
 .hero .cta {
   margin-top: 2.5rem;
-  /* Above title: logo+gap ≈ 11.5rem. Below title: label+tagline+CTA ≈ 8rem.
-     3.5rem margin balances the difference so flexbox centers on the title. */
+  /* Offset slightly below center to balance logo weight above title */
   margin-bottom: 2rem;
   display: inline-block;
   padding: 1rem 2.8rem;
@@ -878,8 +879,41 @@ function setupBlobHover(el, introName, settleName) {
 setupBlobHover(ctaEl, 'ctaIntro', 'ctaSettle');
 document.querySelectorAll('nav ul a').forEach(a => setupBlobHover(a, 'navBlobIntro', 'navBlobSettle'));
 
+function textRotator(el, items, interval, transitionMs) {
+  let queue = [];
+  function shuffle() {
+    queue = [...items].sort(() => Math.random() - 0.5);
+  }
+  shuffle();
+  el.textContent = queue.pop();
+
+  setInterval(() => {
+    if (queue.length === 0) shuffle();
+    const next = queue.pop();
+    el.classList.add('slide-out');
+    setTimeout(() => {
+      el.textContent = next;
+      el.classList.remove('slide-out');
+      el.classList.add('slide-in-prep');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.classList.remove('slide-in-prep');
+          el.classList.add('slide-in');
+          setTimeout(() => el.classList.remove('slide-in'), transitionMs);
+        });
+      });
+    }, transitionMs);
+  }, interval);
+}
+
+// Hero tagline rotation
 (function() {
-  const taglines = [
+  const el = document.getElementById('tagline');
+  el.addEventListener('animationend', function(e) {
+    if (e.animationName === 'jellyText') this.classList.add('loaded');
+  }, { once: true });
+
+  textRotator(el, [
     "Completely off the deep end.",
     "16 arms, 4 tentacles, Zero chill.",
     "Going against the current.",
@@ -894,88 +928,229 @@ document.querySelectorAll('nav ul a').forEach(a => setupBlobHover(a, 'navBlobInt
     "Making waves in the cereal aisle.",
     "Tentacles firmly on the pulse.",
     "Looming in the deep."
-  ];
-  const el = document.getElementById('tagline');
-  el.addEventListener('animationend', function(e) {
-    if (e.animationName === 'jellyText') this.classList.add('loaded');
-  }, { once: true });
-
-  let queue = [];
-  function shuffle() {
-    queue = [...taglines].sort(() => Math.random() - 0.5);
-  }
-  shuffle();
-  el.textContent = queue.pop();
-
-  setInterval(() => {
-    if (queue.length === 0) shuffle();
-    const next = queue.pop();
-
-    el.classList.add('slide-out');
-    setTimeout(() => {
-      el.textContent = next;
-      el.classList.remove('slide-out');
-      el.classList.add('slide-in-prep');
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          el.classList.remove('slide-in-prep');
-          el.classList.add('slide-in');
-          setTimeout(() => el.classList.remove('slide-in'), 500);
-        });
-      });
-    }, 500);
-  }, 6000);
+  ], 6000, 500);
 })();
 
-(function() {
-  const titles = [
-    "Deepwrought",
-    "Breaker of Masts",
-    "The Abyssal Architect",
-    "Sovereign of the Sunken Throne",
-    "Inker of Forbidden Diagrams",
-    "He Whose Tide Does Not Recede",
-    "Warden of the Crushing Deep",
-    "Rightful Ruler of All Drowned Kingdoms",
-    "The Deep's Own Design",
-    "He Who Waits Below",
-    "The Last Fathom",
-    "Scourge of Every Charted Sea"
-  ];
-  const el = document.getElementById('klodinTitle');
-  let queue = [];
-  function shuffle() {
-    queue = [...titles].sort(() => Math.random() - 0.5);
-  }
-  shuffle();
-
-  setInterval(() => {
-    if (queue.length === 0) shuffle();
-    const next = queue.pop();
-
-    el.classList.add('slide-out');
-    setTimeout(() => {
-      el.textContent = next;
-      el.classList.remove('slide-out');
-      el.classList.add('slide-in-prep');
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          el.classList.remove('slide-in-prep');
-          el.classList.add('slide-in');
-          setTimeout(() => el.classList.remove('slide-in'), 350);
-        });
-      });
-    }, 350);
-  }, 2500);
-})();
+// Klodin title rotation
+textRotator(document.getElementById('klodinTitle'), [
+  "Deepwrought",
+  "Breaker of Masts",
+  "The Abyssal Architect",
+  "Sovereign of the Sunken Throne",
+  "Inker of Forbidden Diagrams",
+  "He Whose Tide Does Not Recede",
+  "Warden of the Crushing Deep",
+  "Rightful Ruler of All Drowned Kingdoms",
+  "The Deep's Own Design",
+  "He Who Waits Below",
+  "The Last Fathom",
+  "Scourge of Every Charted Sea"
+], 2500, 350);
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 <script>
 const mobileMenu = document.getElementById('mobileMenu');
-const bsOffcanvas = new bootstrap.Offcanvas(mobileMenu);
+const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(mobileMenu);
 document.querySelectorAll('.offcanvas-link').forEach(link => {
   link.addEventListener('click', () => bsOffcanvas.hide());
 });
+
+// Bubbles
+(function() {
+  const hero = document.querySelector('.hero');
+  const MAX_PARTICLES = 80;
+  const pool = [];
+  const active = [];
+  let heroH = hero.offsetHeight;
+  let heroW = hero.offsetWidth;
+  let scale = Math.min(heroW / 1200, 1);
+  let running = true;
+  let rafId = null;
+  let pausedAt = 0;
+  let totalPaused = 0;
+  const systemStart = performance.now();
+  const warmupDuration = 700;
+  let heroVisible = true;
+  let tabVisible = true;
+  let burstTimer = null;
+  let ambientTimer = null;
+
+  window.addEventListener('resize', () => {
+    heroH = hero.offsetHeight;
+    heroW = hero.offsetWidth;
+    scale = Math.min(heroW / 1200, 1);
+  }, { passive: true });
+
+  function shouldRun() { return heroVisible && tabVisible; }
+
+  function pause() {
+    if (!running) return;
+    running = false;
+    pausedAt = performance.now();
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    if (burstTimer) { clearTimeout(burstTimer); burstTimer = null; }
+    if (ambientTimer) { clearTimeout(ambientTimer); ambientTimer = null; }
+  }
+
+  function resume() {
+    if (running) return;
+    running = true;
+    const elapsed = performance.now() - pausedAt;
+    totalPaused += elapsed;
+    // Shift all born times forward so particles continue from where they froze
+    for (let i = 0; i < active.length; i++) {
+      if (active[i].born) active[i].born += elapsed;
+    }
+    if (!rafId) rafId = requestAnimationFrame(tick);
+    burstLoop();
+    ambientLoop();
+  }
+
+  function checkState() {
+    if (shouldRun()) resume(); else pause();
+  }
+
+  const visObs = new IntersectionObserver(([e]) => {
+    heroVisible = e.isIntersecting;
+    checkState();
+  }, { threshold: 0 });
+  visObs.observe(hero);
+
+  document.addEventListener('visibilitychange', () => {
+    tabVisible = !document.hidden;
+    checkState();
+  });
+
+  function getEl() {
+    let el = pool.pop();
+    if (el) { el.style.display = ''; } else {
+      el = document.createElement('div');
+      el.className = 'bubble';
+      hero.appendChild(el);
+    }
+    return el;
+  }
+  function releaseEl(el) {
+    el.style.display = 'none';
+    if (pool.length < MAX_PARTICLES) pool.push(el);
+  }
+
+  function addParticle(x, size, opacity, duration, drift, phase, wobbleFreq, age) {
+    if (active.length >= MAX_PARTICLES) return;
+    const cx = Math.max(0, Math.min(100, x));
+    if (cx > 35 && cx < 65) return;
+    const el = getEl();
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.left = Math.max(0, Math.min(100, x)) + '%';
+    active.push({ el, x: Math.max(0, Math.min(100, x)), opacity, duration: duration * 1000, drift, phase, wobbleFreq, born: 0, age: (age || 0) * 1000 });
+  }
+
+  function tick(ts) {
+    if (!running) { rafId = null; return; }
+    const warmup = Math.min(1, (ts - systemStart - totalPaused) / warmupDuration);
+    let i = active.length;
+    while (i--) {
+      const p = active[i];
+      if (!p.born) p.born = ts - p.age;
+      const t = (ts - p.born) / p.duration;
+      if (t > 1) {
+        releaseEl(p.el);
+        active[i] = active[active.length - 1];
+        active.pop();
+        continue;
+      }
+      const y = heroH + 20 - (heroH + 40) * t;
+      const wobble = Math.sin(t * Math.PI * p.wobbleFreq + p.phase) * p.drift * (1 - t * 0.3);
+      p.el.style.transform = 'translate(' + wobble + 'px,' + (y - heroH) + 'px)';
+      p.el.style.opacity = p.opacity * warmup;
+    }
+    rafId = requestAnimationFrame(tick);
+  }
+  rafId = requestAnimationFrame(tick);
+
+  function spawnBurst() {
+    if (!running) return;
+    const originX = Math.random() < 0.5 ? 5 + Math.random() * 30 : 65 + Math.random() * 30;
+    const count = 10 + Math.floor(Math.random() * 6);
+    const hasLarge = Math.random() < 0.35;
+    const maxMedium = hasLarge ? 3 : 5;
+    let largeUsed = 0;
+    let mediumUsed = 0;
+    // Distribute large/medium evenly across timeline
+    const roles = [];
+    for (let i = 0; i < count; i++) roles.push('small');
+    if (hasLarge) {
+      roles[Math.floor(count * (0.3 + Math.random() * 0.4))] = 'large';
+    }
+    const medSpacing = count / (maxMedium + 1);
+    for (let m = 0; m < maxMedium; m++) {
+      let idx = Math.floor(medSpacing * (m + 1) + (Math.random() - 0.5) * 2);
+      idx = Math.max(0, Math.min(count - 1, idx));
+      if (roles[idx] !== 'small') { idx = Math.min(count - 1, idx + 1); }
+      if (roles[idx] === 'small') roles[idx] = 'medium';
+    }
+    for (let i = 0; i < count; i++) {
+      const role = roles[i];
+      setTimeout(() => {
+        if (!running) return;
+        const size = role === 'large' ? (20 + Math.random() * 5) * scale
+                   : role === 'medium' ? (10 + Math.random() * 8) * scale
+                   : 4 + Math.random() * 4;
+        const x = originX + (Math.random() - 0.5) * 3;
+        addParticle(x, size, 1, 7 - size * 0.05 + Math.random() * 0.5, (6 + Math.random() * 12) * scale * Math.min(1, 10 / size), Math.random() * Math.PI * 2, 4);
+      }, i * (300 + Math.random() * 200));
+    }
+    return count * 400;
+  }
+
+  // Spawn x in allowed zones, biased toward outer 30%
+  function ambientX() {
+    const side = Math.random() < 0.5;
+    // 70% chance outer (0-30 or 70-100), 30% chance inner-edge (30-35 or 65-70)
+    const outer = Math.random() < 0.7;
+    if (side) {
+      return outer ? Math.random() * 30 : 30 + Math.random() * 5;
+    } else {
+      return outer ? 70 + Math.random() * 30 : 65 + Math.random() * 5;
+    }
+  }
+
+  function spawnAmbient() {
+    if (!running) return;
+    const x = ambientX();
+    const size = 5 + Math.random() * 4;
+    addParticle(x, size, 1, 7 - size * 0.05 + Math.random() * 0.5, (6 + Math.random() * 12) * scale * Math.min(1, 10 / size), Math.random() * Math.PI * 2, 4);
+  }
+
+  function burstLoop() {
+    if (!running) return;
+    const duration = spawnBurst();
+    burstTimer = setTimeout(burstLoop, duration + 2000 + Math.random() * 2000);
+  }
+  const baseArea = 1200 * 800;
+  function ambientInterval() {
+    const areaScale = Math.max(0.5, Math.min(2.5, (heroW * heroH) / baseArea));
+    return (360 + Math.random() * 460) / areaScale;
+  }
+  function ambientLoop() {
+    if (!running) return;
+    spawnAmbient();
+    ambientTimer = setTimeout(ambientLoop, ambientInterval());
+  }
+
+  // Pre-seed
+  for (let i = 0; i < 10; i++) {
+    const x = ambientX();
+    const size = 5 + Math.random() * 4;
+    const duration = 7 - size * 0.05 + Math.random() * 0.5;
+    const age = Math.random() * 0.85 * duration;
+    addParticle(x, size, 1, duration, (6 + Math.random() * 12) * scale * Math.min(1, 10 / size), Math.random() * Math.PI * 2, 4, age);
+  }
+
+  burstLoop();
+  ambientLoop();
+})();
 </script>
 </body>
 </html>
