@@ -356,11 +356,13 @@ nav ul a.settling {
 .games-wrap {
   background: #f0efe9;
   position: relative; z-index: 1;
+  overflow: hidden;
 }
 .games {
   padding: 8rem 3rem;
   max-width: 1200px; margin: 0 auto;
   text-align: center;
+  position: relative; z-index: 5;
 }
 .games h2 {
   font-family: 'Fredoka', sans-serif; font-weight: 700;
@@ -957,7 +959,7 @@ document.querySelectorAll('.offcanvas-link').forEach(link => {
 
 // Bubbles
 (function() {
-  const hero = document.querySelector('.hero');
+  const hero = document.querySelector('.games-wrap');
   const MAX_PARTICLES = 80;
   const pool = [];
   const active = [];
