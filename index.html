@@ -99,12 +99,12 @@ nav .nav-blob {
   position: absolute;
   width: 42px; height: 42px;
   background: rgba(255,255,255,0.9);
-  border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
+  40% { border-radius: 55% 45% 50% 55% / 65% 50% 40% 55%; }
   animation: navBlobMove 4s ease-in-out infinite;
 }
 @keyframes navBlobMove {
-  0%,100% { border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%; }
-  50% { border-radius: 40% 60% 50% 50% / 60% 40% 50% 50%; }
+  40% { border-radius: 55% 45% 50% 55% / 65% 50% 40% 55%; }
+  40% { border-radius: 55% 45% 50% 55% / 65% 50% 40% 55%; }
 }
 nav .nav-logo {
   height: 30px;
@@ -146,10 +146,10 @@ nav ul a.settling {
 }
 @keyframes navBlobIntro {
   0%   { border-radius: 8px; }
-  100% { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
+  40% { border-radius: 55% 45% 50% 55% / 65% 50% 40% 55%; }
 }
 @keyframes navBlobSettle {
-  0%   { border-radius: 55% 38% 60% 42% / 35% 55% 45% 60%; }
+  60% { border-radius: 65% 45% 45% 55% / 45% 60% 55% 40%; }
   100% { border-radius: 8px; }
 }
 
@@ -180,11 +180,11 @@ nav ul a.settling {
 @keyframes jellyDrop {
   0%   { opacity: 0; transform: translateY(-180px) scaleX(0.85) scaleY(1.15); }
   30%  { opacity: 1; transform: translateY(0) scaleX(0.85) scaleY(1.15); }
-  40%  { transform: translateY(0) scaleX(1.25) scaleY(0.7); }
+  40% { border-radius: 55% 45% 50% 55% / 65% 50% 40% 55%; }
   50%  { transform: translateY(-30px) scaleX(0.9) scaleY(1.1); }
-  60%  { transform: translateY(0) scaleX(1.1) scaleY(0.85); }
+  60% { border-radius: 65% 45% 45% 55% / 45% 60% 55% 40%; }
   70%  { transform: translateY(-10px) scaleX(0.95) scaleY(1.05); }
-  80%  { transform: translateY(0) scaleX(1.04) scaleY(0.95); }
+  80% { border-radius: 50% 55% 60% 45% / 40% 45% 65% 55%; }
   90%  { transform: translateY(-3px) scaleX(0.98) scaleY(1.02); }
   100% { opacity: 1; transform: translateY(0) scaleX(1) scaleY(1); }
 }
@@ -200,7 +200,7 @@ nav ul a.settling {
 }
 @keyframes jellyPop {
   0%   { opacity: 0; transform: scale(0) rotate(-8deg); }
-  40%  { opacity: 1; transform: scale(1.2) rotate(3deg); }
+  40% { border-radius: 55% 45% 50% 55% / 65% 50% 40% 55%; }
   55%  { transform: scale(0.85) rotate(-2deg); }
   70%  { transform: scale(1.08) rotate(1deg); }
   82%  { transform: scale(0.96) rotate(0deg); }
@@ -299,13 +299,13 @@ nav ul a.settling {
   from { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
   to   { border-radius: 60px; }
 }
-@keyframes navIntro {
-  from { border-radius: 8px; }
-  to   { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
+@keyframes navBlobIntro {
+  0%   { border-radius: 8px; }
+  100% { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
 }
-@keyframes navSettle {
-  from { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
-  to   { border-radius: 8px; }
+@keyframes navBlobSettle {
+  0%   { border-radius: 55% 38% 60% 42% / 35% 55% 45% 60%; }
+  100% { border-radius: 8px; }
 }
 
 /* ===== ABOUT ===== */
@@ -334,17 +334,21 @@ nav ul a.settling {
 }
 .about .visual-col .blob {
   width: 360px; height: 360px;
-  background: linear-gradient(135deg, rgba(45,184,75,0.15), rgba(232,74,160,0.1));
-  border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
-  position: absolute;
-  animation: blobMove 8s ease-in-out infinite;
+  border-radius: 60% 40% 45% 55% / 45% 58% 42% 55%;
+  overflow: hidden;
+  animation: blobMove 14s ease-in-out infinite;
+}
+.about .visual-col .blob img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 @keyframes blobMove {
-  0%,100% { border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%; }
-  50% { border-radius: 40% 60% 50% 50% / 60% 40% 50% 50%; }
-}
-.about .visual-col .tentacle-icon {
-  font-size: 8rem; position: relative; z-index: 1;
+  0%,100% { border-radius: 60% 40% 45% 55% / 45% 58% 42% 55%; }
+  20% { border-radius: 45% 55% 58% 42% / 58% 42% 55% 45%; }
+  40% { border-radius: 55% 42% 42% 60% / 42% 55% 45% 58%; }
+  60% { border-radius: 42% 58% 55% 45% / 55% 45% 58% 42%; }
+  80% { border-radius: 50% 48% 50% 52% / 48% 52% 50% 50%; }
 }
 
 /* ===== GAMES ===== */
@@ -742,8 +746,7 @@ nav .mobile-hamburger .navbar-toggler-icon {
       <p>Just a small studio in Toronto, Canada. Not the biggest in the ocean — but maybe the one you're glad you found.</p>
     </div>
     <div class="visual-col reveal from-right">
-      <div class="blob" aria-hidden="true"></div>
-      <div class="tentacle-icon" aria-hidden="true">🦑</div>
+      <div class="blob"><img src="https://squidcereal.com/toronto2.png" alt="Tentacle wrapping the CN Tower in Toronto"></div>
     </div>
   </div>
 </section>
