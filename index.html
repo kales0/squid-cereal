@@ -77,9 +77,9 @@ section { position: relative; z-index: 1; overflow-x: clip; }
 /* ===== NAV BAR (slides down on scroll) ===== */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0.6rem 3rem;
-  min-height: 56px;
+  display: flex; justify-content: flex-end; align-items: center;
+  height: 56px;
+  padding: 0 3rem;
   background: rgba(26,26,46,0.95);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -88,9 +88,12 @@ nav {
 }
 nav.visible { transform: translateY(0); }
 nav .nav-brand {
+  position: absolute;
+  left: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex; align-items: center; gap: 1.2rem;
   text-decoration: none;
-  position: relative;
 }
 nav .nav-logo-wrap {
   position: relative;
@@ -117,7 +120,6 @@ nav .nav-title {
   font-family: 'Luckiest Guy', sans-serif;
   font-size: 1.6rem;
   word-spacing: 3px;
-  line-height: 1;
 }
 nav .nav-title .t1 { color: #fff; }
 nav .nav-title .t2 { color: var(--green); }
@@ -809,7 +811,8 @@ nav .mobile-hamburger .navbar-toggler-icon {
   .games-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
-  nav { padding: 0.5rem 1.5rem; }
+  nav { padding: 0 1.5rem; }
+  nav .nav-brand { left: 1.5rem; }
   .top-links { padding: 1rem 1.5rem; }
   .about { grid-template-columns: 1fr; text-align: center; padding: 5rem 2rem; }
   .about .text-col p { margin: 0 auto; }
