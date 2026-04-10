@@ -6,6 +6,7 @@
 <title>Squid Cereal Games</title>
 <meta name="description" content="Squid Cereal Games is a small indie game studio. Questionable ingredients, suspiciously addictive games.">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Luckiest+Guy&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -252,10 +253,13 @@ nav ul a.settling {
   transform: translateX(0);
   opacity: 1;
 }
-.hero .cta {
+.cta-wrap {
+  display: inline-block;
   margin-top: 2.5rem;
-  /* Offset slightly below center to balance logo weight above title */
   margin-bottom: 2rem;
+  animation: jellyPop 0.8s 0.75s both;
+}
+.hero .cta {
   display: inline-block;
   padding: 1rem 2.8rem;
   background: #e84ab2;
@@ -265,19 +269,18 @@ nav ul a.settling {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  border: none; border-radius: 60px;
+  border: none;
   text-decoration: none;
   cursor: pointer;
   transition: transform 0.3s ease;
-  animation: jellyPop 0.8s 0.75s both;
+  animation: blobWobble 1.8s linear infinite;
 }
-.cta.loaded { animation: none; }
+.cta.loaded { }
 .cta.blob-intro {
   animation: ctaIntro 0.35s ease-out both !important;
 }
 .cta.blobbing {
   animation: blobWobble 1.8s ease-in-out infinite !important;
-  transform: scale(1.12);
 }
 .cta.settling {
   animation: ctaSettle 0.35s ease-out both !important;
@@ -291,9 +294,8 @@ nav ul a.settling {
   14%  { border-radius: 40% 55% 35% 65% / 60% 38% 58% 42%; }
   28%  { border-radius: 55% 35% 60% 40% / 38% 55% 42% 60%; }
   42%  { border-radius: 35% 60% 42% 58% / 55% 42% 60% 38%; }
-  57%  { border-radius: 58% 42% 55% 38% / 42% 60% 38% 55%; }
-  71%  { border-radius: 42% 58% 38% 55% / 58% 35% 55% 45%; }
-  85%  { border-radius: 55% 38% 60% 42% / 35% 55% 45% 60%; }
+  57%  { border-radius: 55% 40% 62% 38% / 35% 62% 40% 58%; }
+  78%  { border-radius: 38% 58% 40% 60% / 58% 38% 62% 35%; }
   100% { border-radius: 60% 40% 55% 45% / 45% 60% 35% 55%; }
 }
 @keyframes ctaSettle {
@@ -372,40 +374,168 @@ nav ul a.settling {
 }
 .games .games-sub { color: #999; font-size: 1.05rem; margin-bottom: 3.5rem; }
 .games-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
+  display: flex; flex-direction: column;
+  gap: 2.5rem;
 }
 .game-card {
-  background: #fff;
-  border-radius: 20px;
-  padding: 2.5rem 2rem;
+  background: var(--blue);
+  border-radius: 24px;
   border: none;
-  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), background 0.35s;
-  cursor: pointer;
   position: relative; overflow: hidden;
+  box-shadow: none;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  display: flex; flex-direction: column;
 }
-.game-card::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(232,74,160,0.04), rgba(45,184,75,0.04));
-  opacity: 0; transition: opacity 0.3s;
+.game-card:hover { transform: translateY(-4px); }
+.card-banner {
+  height: 140px;
+  background: var(--banner-bg, linear-gradient(135deg, #1a1a1a, #3a3a3a));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
-.game-card:hover { transform: translateY(-4px) translateX(2px); background: var(--blue); color: #fff; }
-.game-card:hover h3 { color: #fff; }
-.game-card:hover p { color: rgba(255,255,255,0.7); }
-.game-card:hover .tag { background: rgba(255,255,255,0.15); color: #fff; }
-.game-card:hover .card-icon { filter: grayscale(0); }
-.game-card:hover::after { opacity: 0; }
-.game-card .card-icon { font-size: 3rem; margin-bottom: 1rem; }
+.card-content {
+  padding: 1.5rem 1.8rem 0;
+  flex: 1;
+  text-align: left;
+}
+.card-title-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
 .game-card h3 {
   font-family: 'Fredoka', sans-serif; font-weight: 700;
-  font-size: 1.4rem; color: var(--blue); margin-bottom: 0.6rem;
+  font-size: 1.8rem;
+  color: #fff;
 }
-.game-card p { color: #777; font-size: 0.95rem; line-height: 1.6; }
 .game-card .tag {
-  display: inline-block; margin-top: 1rem;
-  padding: 0.3rem 0.9rem; border-radius: 20px;
-  font-size: 0.75rem; font-weight: 600;
-  background: rgba(45,184,75,0.1); color: var(--green);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: var(--pink);
+  color: #fff;
+  padding: 0.25rem 0.7rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+.game-card .card-desc {
+  color: #b0c4de;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+.card-right {
+  margin-top: 2rem;
+}
+.card-info-blocks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+.info-block {
+  background: #152e55;
+  border-radius: 16px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+.info-block i {
+  font-size: 1.8rem;
+  color: #5b8bd4;
+}
+.info-block span {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #d0dced;
+}
+.card-highlights {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.card-highlights span {
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  background: #3b7dd8;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.card-highlights span em {
+  font-style: normal;
+  font-size: 1rem;
+}
+.card-actions {
+  margin-top: auto;
+  padding: 2rem 1.8rem 2rem;
+  display: flex;
+  gap: 0.8rem;
+}
+.card-actions a {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.2rem;
+  border-radius: 12px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: #fff;
+  color: var(--blue);
+  transition: background 0.2s;
+  cursor: pointer;
+}
+.card-actions a:hover { background: #dde4ed; }
+.card-actions a i { font-size: 1.1rem; }
+
+
+@media (min-width: 1000px) {
+  .card-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 0 2.5rem;
+  }
+  .card-title-row {
+    grid-column: 1 / -1;
+  }
+  .game-card .card-desc {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .card-right {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 0;
+  }
+  .card-highlights {
+    grid-column: 1 / -1;
+  }
+  .card-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+  .card-actions a {
+    flex: none;
+    min-width: 240px;
+    padding: 0.85rem 2rem;
+  }
 }
 
 /* ===== TEAM ===== */
@@ -650,12 +780,17 @@ nav .mobile-hamburger .navbar-toggler-icon {
   color: #fff;
   text-decoration: none;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  text-align: center;
+  border-radius: 60px;
   background: #e84ab2;
-  transition: background 0.2s;
+  transition: transform 0.3s ease;
+  animation: blobWobble 1.8s linear infinite;
 }
+.offcanvas .offcanvas-body a:nth-child(1) { animation-delay: 0s; }
+.offcanvas .offcanvas-body a:nth-child(2) { animation-delay: -0.6s; }
+.offcanvas .offcanvas-body a:nth-child(3) { animation-delay: -1.2s; }
 .offcanvas .offcanvas-body a:hover {
-  background: var(--green);
+  transform: scale(1.12);
 }
 
 @media (min-width: 1920px) {
@@ -669,7 +804,7 @@ nav .mobile-hamburger .navbar-toggler-icon {
   .team-card h4 { font-size: 1.5rem; }
 }
 @media (max-width: 1200px) {
-  .games-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .games-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
   nav { padding: 0.5rem 1.5rem; }
@@ -723,7 +858,7 @@ nav .mobile-hamburger .navbar-toggler-icon {
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
-    <a href="#about" class="offcanvas-link">About</a>
+    <a href="#about" class="offcanvas-link">Who We Are</a>
     <a href="#games" class="offcanvas-link">Our Games</a>
     <a href="#team" class="offcanvas-link">The Deep Ones</a>
     <img src="https://squidcereal.com/logo.png" alt="Squid Cereal logo" style="width:60px;margin-top:4rem;align-self:center;opacity:0.85;">
@@ -738,7 +873,7 @@ nav .mobile-hamburger .navbar-toggler-icon {
     <div class="hero-games-label" style="animation: jellyText 0.9s 0.45s both; transform-origin: bottom center;">Games</div>
   </div>
   <p class="tagline" id="tagline"></p>
-  <a href="#games" class="cta">See Our Games</a>
+  <div class="cta-wrap"><a href="#games" class="cta">See Our Games</a></div>
 </section>
 
 <section class="about-wrap" id="about">
@@ -759,23 +894,87 @@ nav .mobile-hamburger .navbar-toggler-icon {
     <h2 class="reveal">Our Games</h2>
     <p class="games-sub reveal">Questionable ingredients. Suspiciously addictive.</p>
     <div class="games-grid stagger">
-      <article class="game-card reveal" style="--i:0">
-        <div class="card-icon" aria-hidden="true">🌊</div>
-        <h3>Depth Crunch</h3>
-        <p>A deep-sea puzzle-platformer where breakfast is the only weapon against the abyss.</p>
-        <span class="tag">Coming Soon</span>
+      <article class="game-card reveal" style="--i:0; --card-accent: #3dd6f5; --banner-bg: url(https://squidcereal.com/sample1-depth.jpg) center/cover;">
+        <div class="card-banner">
+        </div>
+        <div class="card-content">
+          <div class="card-title-row">
+            <h3>Depth Crunch</h3>
+            <span class="tag">Puzzle-Platformer</span>
+          </div>
+          <p class="card-desc">A deep-sea puzzle-platformer where breakfast is the only weapon against the abyss. Descend through procedurally generated ocean trenches, solve cereal-physics puzzles, and try not to drown.</p>
+          <div class="card-right">
+            <div class="card-info-blocks">
+              <div class="info-block">
+                <i class="fa-solid fa-user"></i>
+                <span>Single Player</span>
+              </div>
+              <div class="info-block">
+                <i class="fa-solid fa-desktop"></i>
+                <span>PC / Mac</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-highlights"><span><em>🗺️</em> 40+ Levels</span><span><em>👾</em> Boss Fights</span><span><em>🥣</em> Cereal Physics</span><span><em>📜</em> Deep Lore</span></div>
+        </div>
+        <div class="card-actions">
+          <a href="#"><i class="fa-brands fa-itch-io"></i>itch.io</a>
+        </div>
       </article>
-      <article class="game-card reveal" style="--i:1">
-        <div class="card-icon" aria-hidden="true">🥣</div>
-        <h3>Bowl of Chaos</h3>
-        <p>Multiplayer mayhem in a cereal bowl. Four players, eight tentacles, one spoon.</p>
-        <span class="tag">In Development</span>
+      <article class="game-card reveal" style="--i:1; --card-accent: #f5a623; --banner-bg: url(https://squidcereal.com/sample2-bowl.jpg) center/cover;">
+        <div class="card-banner">
+        </div>
+        <div class="card-content">
+          <div class="card-title-row">
+            <h3>Bowl of Chaos</h3>
+            <span class="tag">Party Brawler</span>
+          </div>
+          <p class="card-desc">Multiplayer mayhem in a cereal bowl. Four players, eight tentacles, one spoon. The milk is rising. Alliances are temporary. The spoon is inevitable.</p>
+          <div class="card-right">
+            <div class="card-info-blocks">
+              <div class="info-block">
+                <i class="fa-solid fa-users"></i>
+                <span>2–4 Players</span>
+              </div>
+              <div class="info-block">
+                <i class="fa-solid fa-gamepad"></i>
+                <span>PC / Console</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-highlights"><span><em>🤝</em> Local Co-op</span><span><em>🏟️</em> 12 Arenas</span><span><em>⚡</em> Power-ups</span><span><em>🦑</em> Ragdoll Tentacles</span></div>
+        </div>
+        <div class="card-actions">
+          <a href="#"><i class="fa-brands fa-steam"></i>Steam</a>
+          <a href="#"><i class="fa-brands fa-itch-io"></i>itch.io</a>
+        </div>
       </article>
-      <article class="game-card reveal" style="--i:2">
-        <div class="card-icon" aria-hidden="true">🎮</div>
-        <h3>Ink & Milk</h3>
-        <p>A narrative adventure about an octopus who just wants a normal morning.</p>
-        <span class="tag">Prototype</span>
+      <article class="game-card reveal" style="--i:2; --card-accent: #e84aa0; --banner-bg: url(https://squidcereal.com/sample3-ink.jpg) center/cover;">
+        <div class="card-banner">
+        </div>
+        <div class="card-content">
+          <div class="card-title-row">
+            <h3>Ink & Milk</h3>
+            <span class="tag">Narrative Adventure</span>
+          </div>
+          <p class="card-desc">A narrative adventure about an octopus who just wants a normal morning. Make coffee. Read the paper. Try not to ink the kitchen. Choices matter — especially at breakfast.</p>
+          <div class="card-right">
+            <div class="card-info-blocks">
+              <div class="info-block">
+                <i class="fa-solid fa-user"></i>
+                <span>Single Player</span>
+              </div>
+              <div class="info-block">
+                <i class="fa-solid fa-mobile-screen"></i>
+                <span>PC / Mac / Mobile</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-highlights"><span><em>🌿</em> Branching Story</span><span><em>🔮</em> Multiple Endings</span><span><em>🖋️</em> Ink Mechanic</span><span><em>☕</em> Cozy Vibes</span></div>
+        </div>
+        <div class="card-actions">
+          <a href="#"><i class="fa-solid fa-play"></i>Play in Browser</a>
+        </div>
       </article>
     </div>
   </div>
@@ -851,9 +1050,10 @@ window.addEventListener('scroll', () => {
   }
 }, { passive: true });
 
+const ctaWrap = document.querySelector('.cta-wrap');
 const ctaEl = document.querySelector('.cta');
-ctaEl.addEventListener('animationend', function(e) {
-  if (e.animationName === 'jellyPop') this.classList.add('loaded');
+ctaWrap.addEventListener('animationend', function(e) {
+  if (e.animationName === 'jellyPop') ctaEl.classList.add('loaded');
 });
 
 function setupBlobHover(el, introName, settleName) {
@@ -878,7 +1078,13 @@ function setupBlobHover(el, introName, settleName) {
   });
 }
 
-setupBlobHover(ctaEl, 'ctaIntro', 'ctaSettle');
+ctaEl.addEventListener('mouseenter', function() {
+  if (!this.classList.contains('loaded')) return;
+  this.style.transform = 'scale(1.12)';
+});
+ctaEl.addEventListener('mouseleave', function() {
+  this.style.transform = '';
+});
 document.querySelectorAll('nav ul a').forEach(a => setupBlobHover(a, 'navBlobIntro', 'navBlobSettle'));
 
 function textRotator(el, items, interval, transitionMs) {
