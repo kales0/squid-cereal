@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Underground Legends — Mail Roulette</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root {
+    --bg-deep: #1a1d2e;
+    --bg-card: #242840;
+    --bg-card-alt: #2a2f4a;
+    --border-subtle: #3a3f5a;
+    --orange: #e8912d;
+    --orange-glow: #f5a623;
+    --green: #5cb85c;
+    --green-bright: #7ed67e;
+    --red: #d9534f;
+    --blue: #3b82f6;
+    --yellow: #facc15;
+    --text-primary: #d5d8e8;
+    --text-dim: #8a8faa;
+    --text-bright: #f0f2ff;
+  }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 20% 20%, rgba(232,145,45,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 500px 500px at 80% 80%, rgba(92,184,92,0.04) 0%, transparent 70%),
+      radial-gradient(ellipse 800px 600px at 50% 50%, rgba(36,40,64,0.8) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+  }
+
+  .header { text-align: center; margin-bottom: 40px; }
+
+  .guild-tag {
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .guild-tag::before, .guild-tag::after { content: '◆'; font-size: 8px; color: var(--orange-glow); opacity: 0.6; }
+
+  .header h1 {
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: clamp(28px, 6vw, 48px);
+    color: var(--text-bright);
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  .header h1 span.orange { color: var(--orange); }
+
+  .header .subtitle {
+    font-size: 15px;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .divider-bar {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, var(--orange) 30%, var(--green) 70%, transparent 100%);
+    border-radius: 2px;
+    margin: 24px 0 36px;
+    opacity: 0.5;
+  }
+
+  /* ── Sections ── */
+  .section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 32px 28px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--orange), transparent);
+    opacity: 0.4;
+  }
+
+  .section-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  /* ── Dual Panel ── */
+  .dual-panel { display: flex; gap: 28px; align-items: stretch; }
+  .panel { flex: 1; display: flex; flex-direction: column; align-items: center; }
+  .panel-divider {
+    width: 2px;
+    background: linear-gradient(to bottom, transparent, var(--border-subtle), transparent);
+    flex-shrink: 0;
+  }
+
+  /* ── Slot Machine ── */
+  .slot-window {
+    width: 100%; max-width: 320px; height: 200px;
+    position: relative; overflow: hidden; border-radius: 10px;
+    background: var(--bg-deep); border: 2px solid var(--border-subtle);
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.5); margin-bottom: 12px;
+  }
+  .slot-window::before, .slot-window::after {
+    content: ''; position: absolute; left: 0; right: 0; height: 60px; z-index: 3; pointer-events: none;
+  }
+  .slot-window::before { top: 0; background: linear-gradient(to bottom, var(--bg-deep) 10%, transparent 100%); }
+  .slot-window::after { bottom: 0; background: linear-gradient(to top, var(--bg-deep) 10%, transparent 100%); }
+
+  .slot-highlight {
+    position: absolute; top: 50%; left: 0; right: 0; height: 48px;
+    transform: translateY(-50%);
+    border-top: 2px solid var(--orange); border-bottom: 2px solid var(--orange);
+    background: rgba(232,145,45,0.06); z-index: 2; pointer-events: none;
+  }
+
+  .slot-reel {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; flex-direction: column; align-items: center; transition: none;
+  }
+  .slot-reel .name-item {
+    height: 48px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700;
+    color: var(--text-primary); white-space: nowrap; flex-shrink: 0; width: 100%;
+  }
+  .slot-reel .name-item.final {
+    color: var(--orange-glow); text-shadow: 0 0 20px rgba(245,166,35,0.5); font-size: 26px;
+  }
+
+  .result-text { text-align: center; font-size: 16px; color: var(--text-dim); min-height: 26px; margin-top: 4px; }
+  .result-text .winner { color: var(--orange-glow); font-weight: 700; font-size: 20px; }
+
+  .slot-reel .name-item.jackpot {
+    color: var(--orange-glow);
+    font-size: 20px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 12px rgba(245,166,35,0.4);
+  }
+  .slot-reel .name-item.final.jackpot {
+    font-size: 24px;
+    text-shadow: 0 0 24px rgba(245,166,35,0.7);
+  }
+
+  .result-text .jackpot-text {
+    color: var(--orange-glow);
+    font-weight: 900;
+    font-size: 22px;
+  }
+
+  .instruction-banner.jackpot-banner {
+    background: rgba(232,145,45,0.15);
+    border-color: rgba(232,145,45,0.5);
+  }
+
+  /* ── UNO Card ── */
+  .card-stage {
+    display: flex; justify-content: center; align-items: center;
+    height: 200px; margin-bottom: 12px; perspective: 800px;
+  }
+  .uno-card {
+    width: 130px; height: 195px; border-radius: 14px;
+    position: relative; transform-style: preserve-3d;
+    transition: transform 0.6s ease; cursor: default;
+  }
+  .uno-card.flipping { animation: cardFlip 0.6s ease forwards; }
+  @keyframes cardFlip {
+    0% { transform: rotateY(0deg) scale(1); }
+    50% { transform: rotateY(90deg) scale(0.9); }
+    100% { transform: rotateY(0deg) scale(1); }
+  }
+  .uno-card .card-face {
+    position: absolute; inset: 0; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    backface-visibility: hidden; border: 4px solid #fff;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .uno-card .card-back {
+    background: radial-gradient(ellipse at center, #2a2f4a 0%, #1a1d2e 100%);
+    border-color: var(--border-subtle);
+  }
+  .card-back-pattern {
+    font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px;
+    color: var(--orange); opacity: 0.3; text-align: center; line-height: 1.2;
+  }
+  .card-back-pattern span { display: block; font-size: 11px; letter-spacing: 3px; color: var(--text-dim); }
+  .uno-card .card-front { flex-direction: column; gap: 4px; }
+  .card-value {
+    font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 44px;
+    line-height: 1; text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  }
+  .card-value.small-text { font-size: 26px; }
+  .card-label {
+    font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 11px;
+    letter-spacing: 2px; text-transform: uppercase; opacity: 0.8;
+  }
+  .corner { position: absolute; font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 13px; }
+  .corner-tl { top: 10px; left: 12px; }
+  .corner-br { bottom: 10px; right: 12px; transform: rotate(180deg); }
+  .card-oval {
+    position: absolute; width: 75px; height: 120px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); transform: rotate(-30deg); pointer-events: none;
+  }
+
+  /* Fix #2: all card fronts use white text with shadow for consistency */
+  .uno-red .card-front    { background: linear-gradient(135deg, #e63946, #c1121f); border-color: #fff; color: #fff; }
+  .uno-blue .card-front   { background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-color: #fff; color: #fff; }
+  .uno-green .card-front  { background: linear-gradient(135deg, #22c55e, #15803d); border-color: #fff; color: #fff; }
+  .uno-yellow .card-front { background: linear-gradient(135deg, #facc15, #ca8a04); border-color: #fff; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.25); }
+  .uno-wild .card-front   { background: conic-gradient(from 45deg, #e63946 0deg 90deg, #3b82f6 90deg 180deg, #22c55e 180deg 270deg, #facc15 270deg 360deg); border-color: #fff; color: #fff; }
+
+  @keyframes cardShuffle { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
+  .uno-card.shuffling { animation: cardShuffle 0.3s linear infinite; }
+
+  /* ── Bonus Cards Row ── */
+  .bonus-area {
+    margin-top: 16px;
+    min-height: 0;
+    transition: min-height 0.3s ease;
+  }
+
+  .bonus-label {
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+
+  .bonus-cards {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .mini-card {
+    width: 56px;
+    height: 82px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+    opacity: 0;
+    transform: scale(0.5) rotateY(180deg);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .mini-card.revealed {
+    opacity: 1;
+    transform: scale(1) rotateY(0deg);
+  }
+
+  /* Fix #2: mini-cards also consistent white text */
+  .mini-card.mc-red    { background: linear-gradient(135deg, #e63946, #c1121f); color: #fff; }
+  .mini-card.mc-blue   { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; }
+  .mini-card.mc-green  { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
+  .mini-card.mc-yellow { background: linear-gradient(135deg, #facc15, #ca8a04); color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.25); }
+
+  .bonus-total {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-bright);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .bonus-total.visible { opacity: 1; }
+
+  /* ── Instruction Banner ── */
+  .instruction-banner {
+    margin-top: 20px;
+    padding: 18px 24px;
+    border-radius: 10px;
+    background: rgba(232,145,45,0.08);
+    border: 1px solid rgba(232,145,45,0.25);
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-bright);
+    display: none;
+  }
+  /* Fix #8: use a separate class for the animation so it re-triggers */
+  .instruction-banner.visible { display: block; }
+  .instruction-banner.animate { animation: bannerIn 0.5s ease forwards; }
+
+  @keyframes bannerIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .instruction-banner .val { color: var(--orange-glow); font-size: 24px; }
+  .instruction-banner .color-name { font-weight: 900; }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 10px; padding: 16px 52px; border: none; border-radius: 10px;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 18px;
+    letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
+    transition: all 0.2s ease; position: relative; overflow: hidden;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--orange), #d47a1a);
+    color: #fff; box-shadow: 0 4px 20px rgba(232,145,45,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,145,45,0.45); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* Fix #7: button press feedback */
+  @keyframes btnPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.96); }
+    100% { transform: scale(1); }
+  }
+  .btn-primary.pressing { animation: btnPulse 0.2s ease; }
+
+  .btn-wrap { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 24px; }
+
+  .btn-skip {
+    width: 48px; height: 48px; padding: 0;
+    border-radius: 10px;
+    font-size: 18px;
+    letter-spacing: 0;
+    background: var(--bg-card-alt);
+    color: var(--text-dim);
+    border: 1px solid var(--border-subtle);
+    box-shadow: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease;
+    cursor: not-allowed;
+  }
+  .btn-skip:not(:disabled) {
+    color: var(--orange-glow);
+    border-color: var(--orange);
+    cursor: pointer;
+  }
+  .btn-skip:not(:disabled):hover {
+    background: rgba(232,145,45,0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(232,145,45,0.2);
+  }
+  .btn-skip:disabled { opacity: 0.3; }
+
+  /* Fix #11: skip tooltip */
+  .skip-hint {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 6px;
+    opacity: 0.5;
+    letter-spacing: 1px;
+  }
+
+  /* ── Color Picker Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 36px 40px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    animation: modalIn 0.3s ease;
+  }
+
+  @keyframes modalIn {
+    0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-title {
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: 22px;
+    color: var(--text-bright);
+    margin-bottom: 8px;
+  }
+
+  .modal-subtitle {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+
+  .color-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .color-btn {
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+  }
+  .color-btn:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(0,0,0,0.4); }
+
+  .color-btn.cb-red    { background: linear-gradient(135deg, #e63946, #c1121f); color: #fff; }
+  .color-btn.cb-blue   { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; }
+  .color-btn.cb-green  { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
+  .color-btn.cb-yellow { background: linear-gradient(135deg, #facc15, #ca8a04); color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+  /* ── Edit Names Button ── */
+  .edit-names-btn {
+    background: none;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-dim);
+    font-size: 13px;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-left: 6px;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .edit-names-btn:hover {
+    color: var(--orange-glow);
+    border-color: var(--orange);
+    background: rgba(232,145,45,0.1);
+  }
+
+  /* ── Names Modal ── */
+  .names-modal-box { max-width: 440px; }
+
+  .names-textarea {
+    width: 100%;
+    min-height: 260px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 14px 16px;
+    resize: vertical;
+    line-height: 1.7;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .names-textarea:focus { border-color: var(--orange); }
+
+  .names-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+  }
+
+  .names-modal-right {
+    display: flex;
+    gap: 10px;
+  }
+
+  /* Fix #10: member count display */
+  .names-count {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    text-align: right;
+    letter-spacing: 1px;
+  }
+
+  .btn-modal {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn-modal-cancel {
+    background: var(--bg-card-alt);
+    color: var(--text-dim);
+    border: 1px solid var(--border-subtle);
+  }
+  .btn-modal-cancel:hover { color: var(--text-primary); border-color: var(--text-dim); }
+  .btn-modal-save {
+    background: linear-gradient(135deg, var(--orange), #d47a1a);
+    color: #fff;
+  }
+  .btn-modal-save:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(232,145,45,0.3); }
+  /* Fix #6: reset to defaults button */
+  .btn-modal-reset {
+    background: none;
+    color: var(--text-dim);
+    border: 1px solid var(--border-subtle);
+    font-size: 13px;
+    padding: 10px 16px;
+  }
+  .btn-modal-reset:hover { color: var(--red); border-color: var(--red); }
+
+  /* ── Sparkles ── */
+  @keyframes sparkle-burst {
+    0% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(0); }
+    60% { opacity: 1; }
+    100% { opacity: 0; transform: translate(calc(var(--tx) * 3), calc(var(--ty) * 3)) scale(1); }
+  }
+  .sparkle {
+    position: absolute; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--orange-glow); pointer-events: none;
+    animation: sparkle-burst 0.8s ease-out forwards;
+  }
+
+  /* ── Copypasta ── */
+  .copypasta-section { text-align: center; }
+  .copypasta { font-size: 17px; line-height: 1.8; color: var(--text-primary); }
+  .copypasta p { margin-bottom: 8px; }
+  .copypasta .ps { margin-top: 16px; font-style: italic; color: var(--text-dim); font-size: 15px; }
+
+  .footer { text-align: center; margin-top: 24px; font-size: 12px; color: var(--text-dim); letter-spacing: 2px; opacity: 0.4; }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .dual-panel { flex-direction: column; gap: 20px; }
+    .panel-divider { width: 100%; height: 2px; background: linear-gradient(to right, transparent, var(--border-subtle), transparent); }
+    .slot-window { max-width: 100%; height: 170px; }
+    .card-stage { height: 180px; }
+    .uno-card { width: 115px; height: 172px; }
+    .card-value { font-size: 36px; }
+    .container { padding: 20px 14px 40px; }
+    .section { padding: 24px 16px; }
+    .mini-card { width: 48px; height: 70px; font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="guild-tag">Underground Legends</div>
+    <h1><span class="orange">Mail</span> Roulette</h1>
+    <div class="subtitle">[<span style="color:var(--green-bright)">uL</span>] & [<span style="color:var(--green-bright)">uLT</span>]</div>
+  </div>
+
+  <div class="divider-bar"></div>
+
+  <!-- Main Roulette Section -->
+  <div class="section">
+    <div class="dual-panel">
+      <div class="panel">
+        <div class="section-label">◈ Recipient ◈ <button class="edit-names-btn" onclick="openNamesModal()" title="Edit name list">✎</button></div>
+        <div class="slot-window" id="slotWindow">
+          <div class="slot-highlight"></div>
+          <div class="slot-reel" id="slotReel"></div>
+        </div>
+        <div class="result-text" id="nameResult"></div>
+      </div>
+
+      <div class="panel-divider"></div>
+
+      <div class="panel">
+        <div class="section-label">◈ Uno Card ◈</div>
+        <div class="card-stage" id="cardStage">
+          <div class="uno-card" id="unoCard">
+            <div class="card-face card-back">
+              <div class="card-back-pattern">UL<span>draw fate</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="result-text" id="cardResult"></div>
+      </div>
+    </div>
+
+    <!-- Bonus cards area (for +2 / +4) -->
+    <div class="bonus-area" id="bonusArea"></div>
+
+    <!-- Instruction banner -->
+    <div class="instruction-banner" id="instructionBanner"></div>
+
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="goBtn" onclick="rollBoth()">⚡ Roll Fate ⚡</button>
+      <button class="btn btn-skip" id="skipBtn" onclick="advanceName()" disabled title="Landed on yourself? Skip to the next name (1 use per roll)">▶</button>
+    </div>
+    <div class="skip-hint">▶ = skip if you rolled yourself</div>
+  </div>
+
+  <!-- Rules / Copypasta -->
+  <div class="section copypasta-section">
+    <div class="section-label">◈ The Rules ◈</div>
+    <div style="text-align:center;font-size:13px;color:var(--text-dim);margin-bottom:14px;letter-spacing:1px;">[Include the following text in the mail]</div>
+    <div class="copypasta">
+      <p><strong style="color:var(--red)">Red</strong>, <strong style="color:var(--green-bright)">Green</strong>, <strong style="color:var(--blue)">Blue</strong>, <strong style="color:var(--yellow)">Yellow</strong> — Add on, items/new color but add to current items also and send to someone else —</p>
+      <p>Current color — <strong id="currentColor" style="color:var(--red)">Red</strong></p>
+      <p class="ps">PS: — IDFK ask Scorch</p>
+    </div>
+  </div>
+
+  <div class="footer">UNDERGROUND LEGENDS — MAIL ROULETTE</div>
+</div>
+
+<!-- Color Picker Modal -->
+<div class="modal-overlay" id="colorModal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">Pick a Color</div>
+    <div class="modal-subtitle" id="modalSubtitle">Choose wisely...</div>
+    <div class="color-buttons">
+      <button class="color-btn cb-red" onclick="pickColor('uno-red')">Red</button>
+      <button class="color-btn cb-blue" onclick="pickColor('uno-blue')">Blue</button>
+      <button class="color-btn cb-green" onclick="pickColor('uno-green')">Green</button>
+      <button class="color-btn cb-yellow" onclick="pickColor('uno-yellow')">Yellow</button>
+    </div>
+  </div>
+</div>
+
+<!-- Names Editor Modal -->
+<div class="modal-overlay" id="namesModal">
+  <div class="modal-box names-modal-box">
+    <div class="modal-title">Edit Members</div>
+    <div class="modal-subtitle">One name per line</div>
+    <textarea id="namesTextarea" class="names-textarea" spellcheck="false" oninput="updateNameCount()"></textarea>
+    <div class="names-count" id="namesCount"></div>
+    <div class="names-modal-actions">
+      <button class="btn-modal btn-modal-reset" onclick="resetNamesToDefault()">Reset to Default</button>
+      <div class="names-modal-right">
+        <button class="btn-modal btn-modal-cancel" onclick="closeNamesModal()">Cancel</button>
+        <button class="btn-modal btn-modal-save" onclick="saveNames()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_MEMBERS = [
+  "Pyrios", "Scorching Ice", "Nokaze", "Canyon", "Oddity",
+  "Franjam", "Basic", "Hiroki", "SoupTheCat", "Bricker",
+  "wavec", "DarmadaTV", "Geezer", "geez", "Bry",
+  "CQ Mian", "bastionmongo", "Klodin", "Fataleyah", "Ohnage"
+];
+
+const JACKPOT = '★ JACKPOT ★';
+
+const UNO_CARDS = [
+  { value: "0", display: "0" },
+  { value: "1", display: "1" },
+  { value: "2", display: "2" },
+  { value: "3", display: "3" },
+  { value: "4", display: "4" },
+  { value: "5", display: "5" },
+  { value: "6", display: "6" },
+  { value: "7", display: "7" },
+  { value: "8", display: "8" },
+  { value: "9", display: "9" },
+  { value: "+2", display: "+2", label: "DRAW TWO" },
+  { value: "+4", display: "+4", label: "DRAW FOUR" },
+  { value: "W", display: "★", label: "WILD" },
+];
+
+const CARD_COLORS = ["uno-red", "uno-blue", "uno-green", "uno-yellow"];
+const COLOR_MAP = {
+  'uno-red':    { name: 'Red',    css: 'var(--red)',          mini: 'mc-red' },
+  'uno-green':  { name: 'Green',  css: 'var(--green-bright)', mini: 'mc-green' },
+  'uno-blue':   { name: 'Blue',   css: 'var(--blue)',         mini: 'mc-blue' },
+  'uno-yellow': { name: 'Yellow', css: 'var(--yellow)',        mini: 'mc-yellow' },
+};
+
+// Fix #12: persist current color across sessions
+function loadCurrentColor() {
+  try {
+    const saved = localStorage.getItem('ul-mail-roulette-color');
+    if (saved && COLOR_MAP[saved]) return saved;
+  } catch(e) {}
+  return 'uno-red';
+}
+
+function saveCurrentColor(colorClass) {
+  try { localStorage.setItem('ul-mail-roulette-color', colorClass); } catch(e) {}
+}
+
+// Load members from localStorage or use defaults
+function loadMembers() {
+  try {
+    const saved = localStorage.getItem('ul-mail-roulette-members');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch(e) {}
+  return [...DEFAULT_MEMBERS];
+}
+
+let MEMBERS = loadMembers();
+
+function saveMembers() {
+  try { localStorage.setItem('ul-mail-roulette-members', JSON.stringify(MEMBERS)); } catch(e) {}
+}
+
+// ── State ──
+let isRunning = false;
+let pendingCard = null;
+let cardDoneCallback = null;
+let currentWinnerIdx = 0;
+let currentItemH = 48;
+let currentCenterOffset = 0;
+let skipUsed = false;
+let lastRollJackpot = false;
+
+// ── Names Modal ──
+function openNamesModal() {
+  document.getElementById('namesTextarea').value = MEMBERS.join('\n');
+  document.getElementById('namesModal').classList.add('active');
+  updateNameCount();
+  setTimeout(() => document.getElementById('namesTextarea').focus(), 100);
+}
+
+function closeNamesModal() {
+  document.getElementById('namesModal').classList.remove('active');
+}
+
+// Fix #10: live member count
+function updateNameCount() {
+  const raw = document.getElementById('namesTextarea').value;
+  const count = raw.split('\n').map(n => n.trim()).filter(n => n.length > 0).length;
+  document.getElementById('namesCount').textContent = `${count} member${count !== 1 ? 's' : ''}`;
+}
+
+function saveNames() {
+  const raw = document.getElementById('namesTextarea').value;
+  const names = raw.split('\n').map(n => n.trim()).filter(n => n.length > 0);
+  if (names.length < 2) {
+    alert('You need at least 2 names!');
+    return;
+  }
+  MEMBERS = names;
+  saveMembers();
+  closeNamesModal();
+  initReel();
+}
+
+// Fix #6: reset to defaults
+function resetNamesToDefault() {
+  document.getElementById('namesTextarea').value = DEFAULT_MEMBERS.join('\n');
+  updateNameCount();
+}
+
+// ── Helpers ──
+function randomFrom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function randomFromExcluding(arr, exclude) {
+  let pick;
+  do { pick = randomFrom(arr); } while (pick === exclude);
+  return pick;
+}
+
+// ── Name Slot Machine ──
+function buildReel(names) {
+  const reel = document.getElementById('slotReel');
+  reel.innerHTML = '';
+  for (const name of names) {
+    const div = document.createElement('div');
+    div.className = 'name-item' + (name === JACKPOT ? ' jackpot' : '');
+    div.textContent = name;
+    reel.appendChild(div);
+  }
+}
+
+function initReel() {
+  const pool = [...MEMBERS, JACKPOT];
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  buildReel(shuffled);
+  const reel = document.getElementById('slotReel');
+  const itemH = reel.querySelector('.name-item')?.offsetHeight || 48;
+  const windowH = document.getElementById('slotWindow').offsetHeight;
+  const midIdx = Math.floor(shuffled.length / 2);
+  reel.style.transform = `translateY(${(windowH / 2) - (itemH / 2) - (midIdx * itemH)}px)`;
+}
+
+function spinName(callback) {
+  document.getElementById('nameResult').innerHTML = '';
+  const pool = [...MEMBERS, JACKPOT];
+  const winner = randomFrom(pool);
+  const isJackpot = winner === JACKPOT;
+  const totalItems = 60 + Math.floor(Math.random() * 20);
+  const padAfter = 3;
+  const winnerIdx = totalItems - 1;
+
+  // Build reel with no consecutive duplicates
+  const reelNames = [];
+  for (let i = 0; i < totalItems - 1; i++) {
+    reelNames.push(randomFromExcluding(pool, reelNames[reelNames.length - 1]));
+  }
+  // Ensure slot before winner isn't the same as winner
+  if (reelNames[reelNames.length - 1] === winner) {
+    reelNames[reelNames.length - 1] = randomFromExcluding(pool, winner);
+  }
+  reelNames.push(winner);
+  // Padding after winner
+  for (let i = 0; i < padAfter; i++) {
+    reelNames.push(randomFromExcluding(pool, reelNames[reelNames.length - 1]));
+  }
+
+  buildReel(reelNames);
+  const reel = document.getElementById('slotReel');
+  const itemH = reel.querySelector('.name-item').offsetHeight;
+  const windowH = document.getElementById('slotWindow').offsetHeight;
+  const centerOffset = (windowH / 2) - (itemH / 2);
+
+  reel.style.transition = 'none';
+  reel.style.transform = `translateY(${centerOffset}px)`;
+
+  requestAnimationFrame(() => { requestAnimationFrame(() => {
+    reel.style.transition = 'transform 4s cubic-bezier(0.15, 0.85, 0.25, 1)';
+    reel.style.transform = `translateY(${centerOffset - winnerIdx * itemH}px)`;
+  }); });
+
+  setTimeout(() => {
+    const items = reel.querySelectorAll('.name-item');
+    items[winnerIdx].classList.add('final');
+
+    if (isJackpot) {
+      document.getElementById('nameResult').innerHTML =
+        '<span class="jackpot-text">★ JACKPOT! ★</span>';
+      lastRollJackpot = true;
+    } else {
+      document.getElementById('nameResult').innerHTML =
+        `Sending mail to: <span class="winner">${winner}</span>`;
+      lastRollJackpot = false;
+    }
+
+    spawnSparkles(document.getElementById('slotWindow'));
+
+    // Save state for skip button
+    currentWinnerIdx = winnerIdx;
+    currentItemH = itemH;
+    currentCenterOffset = centerOffset;
+    skipUsed = false;
+    // Fix #4: only enable skip if there are items after
+    const totalReelItems = reel.querySelectorAll('.name-item').length;
+    document.getElementById('skipBtn').disabled = (winnerIdx + 1 >= totalReelItems);
+
+    if (callback) callback();
+  }, 4200);
+}
+
+// ── UNO Card Draw ──
+function drawCard(callback) {
+  document.getElementById('cardResult').innerHTML = '';
+  document.getElementById('bonusArea').innerHTML = '';
+  const banner = document.getElementById('instructionBanner');
+  banner.className = 'instruction-banner';
+  banner.innerHTML = '';
+
+  const card = randomFrom(UNO_CARDS);
+  const isWild = card.value === "W" || card.value === "+4";
+  const colorClass = isWild ? "uno-wild" : randomFrom(CARD_COLORS);
+
+  const unoEl = document.getElementById('unoCard');
+  unoEl.className = 'uno-card';
+  unoEl.innerHTML = '<div class="card-face card-back"><div class="card-back-pattern">UL<span>draw fate</span></div></div>';
+  requestAnimationFrame(() => { unoEl.className = 'uno-card shuffling'; });
+
+  setTimeout(() => {
+    unoEl.className = `uno-card ${colorClass} flipping`;
+    setTimeout(() => {
+      const isSmall = card.value === "+2" || card.value === "+4" || card.value === "W";
+      unoEl.innerHTML = `
+        <div class="card-face card-front">
+          <div class="card-oval"></div>
+          <span class="corner corner-tl">${card.display}</span>
+          <span class="card-value ${isSmall ? 'small-text' : ''}">${card.display}</span>
+          ${card.label ? `<span class="card-label">${card.label}</span>` : ''}
+          <span class="corner corner-br">${card.display}</span>
+        </div>`;
+    }, 300);
+
+    setTimeout(() => {
+      const colorName = colorClass.replace('uno-', '').toUpperCase();
+      const desc = card.label || card.display;
+      document.getElementById('cardResult').innerHTML =
+        `Drew: <span class="winner">${isWild ? '' : colorName + ' '}${desc}</span>`;
+      spawnSparkles(document.getElementById('cardStage'));
+
+      if (card.value === "W") {
+        pendingCard = card;
+        cardDoneCallback = callback;
+        showColorModal('Wild Card!', 'Pick a color — you add 0 materials');
+      } else if (card.value === "+4") {
+        pendingCard = card;
+        cardDoneCallback = callback;
+        showColorModal('+4 Draw Four!', 'Pick a color, then draw 4 cards');
+      } else if (card.value === "+2") {
+        drawBonusCards(2, colorClass, callback);
+        updateCurrentColor(colorClass);
+      } else {
+        updateCurrentColor(colorClass);
+        showInstructionBanner(parseInt(card.value), colorClass);
+        if (callback) callback();
+      }
+    }, 700);
+  }, 3000);
+}
+
+// ── Color Picker Modal ──
+function showColorModal(title, subtitle) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalSubtitle').textContent = subtitle;
+  document.getElementById('colorModal').classList.add('active');
+}
+
+function pickColor(chosenColorClass) {
+  document.getElementById('colorModal').classList.remove('active');
+  updateCurrentColor(chosenColorClass);
+
+  const card = pendingCard;
+  const cb = cardDoneCallback;
+  pendingCard = null;
+  cardDoneCallback = null;
+
+  if (card.value === "W") {
+    showInstructionBanner(0, chosenColorClass);
+    if (cb) cb();
+  } else if (card.value === "+4") {
+    drawBonusCards(4, chosenColorClass, cb);
+  }
+}
+
+// ── Draw Bonus Cards ──
+function drawBonusCards(count, colorClass, callback) {
+  const mapped = COLOR_MAP[colorClass];
+  const draws = [];
+  for (let i = 0; i < count; i++) {
+    draws.push(Math.floor(Math.random() * 10));
+  }
+  const total = draws.reduce((a, b) => a + b, 0);
+
+  const area = document.getElementById('bonusArea');
+  area.innerHTML = `
+    <div class="bonus-label">Bonus Draw — ${count} Cards</div>
+    <div class="bonus-cards" id="bonusCards">
+      ${draws.map((v, i) => `<div class="mini-card ${mapped.mini}" data-idx="${i}">${v}</div>`).join('')}
+    </div>
+    <div class="bonus-total" id="bonusTotal">Total: <span style="color:${mapped.css};font-size:22px">${total}</span></div>
+  `;
+
+  const cards = area.querySelectorAll('.mini-card');
+  cards.forEach((c, i) => {
+    setTimeout(() => c.classList.add('revealed'), 300 + i * 400);
+  });
+
+  setTimeout(() => {
+    document.getElementById('bonusTotal').classList.add('visible');
+    showInstructionBanner(total, colorClass);
+    if (callback) callback();
+  }, 300 + count * 400 + 400);
+}
+
+// ── Update Current Color (with persistence) ──
+function updateCurrentColor(colorClass) {
+  const mapped = COLOR_MAP[colorClass];
+  if (mapped) {
+    const el = document.getElementById('currentColor');
+    el.textContent = mapped.name;
+    el.style.color = mapped.css;
+    saveCurrentColor(colorClass);
+  }
+}
+
+// Fix #8: force re-trigger banner animation
+function showInstructionBanner(value, colorClass) {
+  const mapped = COLOR_MAP[colorClass];
+  const banner = document.getElementById('instructionBanner');
+  const colorStyle = `color:${mapped.css}`;
+
+  if (value === 0) {
+    banner.innerHTML = `Add <span class="val">0</span> materials — lucky! Just pass it along in <span class="color-name" style="${colorStyle}">${mapped.name}</span>`;
+  } else {
+    banner.innerHTML = `Add <span class="val">${value}</span> <span class="color-name" style="${colorStyle}">${mapped.name}</span> material${value !== 1 ? 's' : ''} to the mail!`;
+  }
+
+  // Force animation re-trigger
+  banner.className = 'instruction-banner';
+  void banner.offsetWidth; // reflow
+  banner.className = 'instruction-banner visible animate';
+}
+
+function showJackpotBanner() {
+  const banner = document.getElementById('instructionBanner');
+  banner.innerHTML = '<span class="val">★ JACKPOT! ★</span><br>Keep all the materials for yourself! Start fresh with a new roll.';
+  banner.className = 'instruction-banner';
+  void banner.offsetWidth;
+  banner.className = 'instruction-banner visible animate jackpot-banner';
+  // Fix #9: dim card result on jackpot
+  document.getElementById('cardResult').innerHTML =
+    '<span style="opacity:0.4">Card ignored — Jackpot!</span>';
+  document.getElementById('bonusArea').innerHTML = '';
+}
+
+// ── Advance Name (skip) ──
+function advanceName() {
+  if (skipUsed || isRunning) return;
+
+  const reel = document.getElementById('slotReel');
+  const items = reel.querySelectorAll('.name-item');
+
+  // Fix #4: bounds check
+  if (currentWinnerIdx + 1 >= items.length) return;
+
+  skipUsed = true;
+  document.getElementById('skipBtn').disabled = true;
+
+  items[currentWinnerIdx].classList.remove('final');
+  currentWinnerIdx += 1;
+
+  reel.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+  reel.style.transform = `translateY(${currentCenterOffset - currentWinnerIdx * currentItemH}px)`;
+
+  setTimeout(() => {
+    items[currentWinnerIdx].classList.add('final');
+    const newName = items[currentWinnerIdx].textContent;
+
+    if (newName === JACKPOT) {
+      document.getElementById('nameResult').innerHTML =
+        '<span class="jackpot-text">★ JACKPOT! ★</span>';
+      lastRollJackpot = true;
+      showJackpotBanner();
+    } else {
+      document.getElementById('nameResult').innerHTML =
+        `Sending mail to: <span class="winner">${newName}</span>`;
+      lastRollJackpot = false;
+    }
+
+    spawnSparkles(document.getElementById('slotWindow'));
+  }, 450);
+}
+
+// ── Combined Trigger ──
+function rollBoth() {
+  if (isRunning) return;
+  isRunning = true;
+
+  // Fix #7: button press feedback
+  const btn = document.getElementById('goBtn');
+  btn.classList.add('pressing');
+  setTimeout(() => btn.classList.remove('pressing'), 200);
+
+  btn.disabled = true;
+  document.getElementById('skipBtn').disabled = true;
+  skipUsed = true;
+
+  let namesDone = false;
+  let cardDone = false;
+
+  function checkDone() {
+    if (namesDone && cardDone) {
+      // Fix #5: jackpot overrides card result
+      if (lastRollJackpot) {
+        showJackpotBanner();
+      }
+      btn.disabled = false;
+      isRunning = false;
+    }
+  }
+
+  spinName(() => { namesDone = true; checkDone(); });
+  drawCard(() => { cardDone = true; checkDone(); });
+}
+
+// ── Sparkle effect ──
+function spawnSparkles(container) {
+  const rect = container.getBoundingClientRect();
+  const cx = rect.width / 2;
+  const cy = rect.height / 2;
+  for (let i = 0; i < 16; i++) {
+    const spark = document.createElement('div');
+    spark.className = 'sparkle';
+    const angle = (Math.PI * 2 / 16) * i + (Math.random() * 0.4 - 0.2);
+    const dist = 30 + Math.random() * 40;
+    spark.style.left = cx + 'px';
+    spark.style.top = cy + 'px';
+    spark.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+    spark.style.setProperty('--ty', `${Math.sin(angle) * dist}px`);
+    spark.style.background = ['#e8912d','#f5a623','#5cb85c','#fff','#facc15'][Math.floor(Math.random()*5)];
+    spark.style.animationDelay = `${Math.random() * 0.15}s`;
+    container.style.position = 'relative';
+    container.appendChild(spark);
+    setTimeout(() => spark.remove(), 1000);
+  }
+}
+
+// ── Init ──
+// Fix #12: restore persisted current color on load
+(function init() {
+  const savedColor = loadCurrentColor();
+  const mapped = COLOR_MAP[savedColor];
+  if (mapped) {
+    const el = document.getElementById('currentColor');
+    el.textContent = mapped.name;
+    el.style.color = mapped.css;
+  }
+  initReel();
+})();
+</script>
+</body>
+</html>
