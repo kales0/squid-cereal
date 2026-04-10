@@ -593,7 +593,7 @@ nav ul a.settling {
 }
 .team-card h4 {
   font-family: 'Fredoka', sans-serif; font-weight: 700;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   color: #fff;
   margin-bottom: 1rem;
   text-align: center;
@@ -622,15 +622,15 @@ nav ul a.settling {
   transition: transform 0.35s ease, opacity 0.35s ease !important;
 }
 .team-card p {
-  font-size: 0.9rem;
-  line-height: 1.7;
+  font-size: 1rem;
+  line-height: 1.55;
   color: rgba(255,255,255,0.5);
   margin-bottom: 0.8rem;
 }
 .team-card .interests-label {
   font-family: 'Fredoka', sans-serif;
   font-weight: 600;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   letter-spacing: 1.5px;
   color: var(--green);
   margin-top: 1.2rem;
@@ -643,7 +643,7 @@ nav ul a.settling {
   gap: 0.4rem;
 }
 .team-card .interests span {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   padding: 0.25rem 0.65rem;
   border-radius: 20px;
   background: rgba(255,255,255,0.06);
@@ -815,8 +815,35 @@ nav .mobile-hamburger .navbar-toggler-icon {
   .hero .cta { font-size: 1.4rem; padding: 1.2rem 3.5rem; }
   .hero-games-label { font-size: 1rem; }
   .top-links ul a { font-size: 1.1rem; }
-  .team-card p { font-size: 1.05rem; }
-  .team-card h4 { font-size: 1.5rem; }
+  .team-card p { font-size: 1.1rem; }
+  .team-card h4 { font-size: 1.6rem; }
+}
+@media (min-width: 2100px) {
+  .about { max-width: 1400px; }
+  .games { max-width: 1400px; }
+  .team-inner { max-width: 1300px; }
+  .about .text-col p { font-size: 1.4rem; max-width: 100%; }
+  .about .visual-col .blob { width: 480px; height: 480px; }
+  .about .visual-col { justify-content: flex-end; }
+  .about { gap: 2rem; }
+  .games .games-sub { font-size: 1.15rem; }
+  .games-grid { gap: 3.5rem; }
+  .game-card h3 { font-size: 2rem; }
+  .game-card .card-desc { font-size: 1.15rem; }
+  .game-card .tag { font-size: 0.8rem; }
+  .card-highlights span { font-size: 0.95rem; }
+  .info-block span { font-size: 0.95rem; }
+  .info-block i { font-size: 2.1rem; }
+  .card-actions a { font-size: 1.1rem; min-width: 320px; }
+  .card-detail strong { font-size: 0.75rem; }
+  .card-detail em { font-size: 1.15rem; }
+  .team .sub { font-size: 1.15rem; }
+  .team-grid { gap: 2.5rem; }
+  .team-card h4 { font-size: 1.8rem; }
+  .team-card p { font-size: 1.2rem; }
+  .team-card .interests span { font-size: 0.95rem; }
+  .team-card .interests-label { font-size: 0.95rem; }
+  footer .copy { font-size: 1rem; }
 }
 @media (max-width: 1200px) {
   .games-grid { grid-template-columns: 1fr; }
@@ -826,12 +853,16 @@ nav .mobile-hamburger .navbar-toggler-icon {
   nav .mobile-hamburger { right: 1.5rem; }
   nav ul { right: 1.5rem; }
   .top-links { padding: 1rem 1.5rem; }
-  .about { grid-template-columns: 1fr; text-align: center; padding: 5rem 2rem; }
-  .about .text-col p { margin: 0 auto; }
+  .about { grid-template-columns: 1fr; text-align: left; padding: 5rem 2rem; }
+  .about .text-col p { margin: 0; }
   .games { padding: 5rem 2rem; }
   .team { padding: 5rem 2rem; }
   footer { padding: 3rem 2rem; }
-  .team-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+  .team-grid { grid-template-columns: 1fr; }
+  .team-card h4 { font-size: 1.5rem; }
+  .team-card p { font-size: 1.05rem; }
+  .team-card .interests-label { font-size: 0.85rem; }
+  .team-card .interests span { font-size: 0.85rem; }
 }
 @media (max-height: 500px) and (orientation: landscape) {
   .hero { min-height: 100vh; padding: 1.5rem 2rem 2rem; }
