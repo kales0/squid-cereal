@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Underground Legends — Mail Roulette</title>
+<title>Underground Legends — UNO Roulette</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -58,7 +58,7 @@
   .guild-tag {
     font-family: 'Cinzel', serif;
     font-weight: 900;
-    font-size: 14px;
+    font-size: 16px;
     letter-spacing: 6px;
     text-transform: uppercase;
     color: var(--orange);
@@ -118,7 +118,7 @@
 
   .section-label {
     font-family: 'Orbitron', sans-serif;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: 4px;
     text-transform: uppercase;
@@ -169,8 +169,8 @@
     color: var(--orange-glow); text-shadow: 0 0 20px rgba(245,166,35,0.5); font-size: 26px;
   }
 
-  .result-text { text-align: center; font-size: 16px; color: var(--text-dim); min-height: 26px; margin-top: 4px; }
-  .result-text .winner { color: var(--orange-glow); font-weight: 700; font-size: 20px; }
+  .result-text { text-align: center; font-size: 18px; color: var(--text-dim); min-height: 26px; margin-top: 4px; }
+  .result-text .winner { color: var(--orange-glow); font-weight: 700; font-size: 22px; }
 
   .slot-reel .name-item.jackpot {
     color: var(--orange-glow);
@@ -263,7 +263,7 @@
   .bonus-label {
     text-align: center;
     font-family: 'Orbitron', sans-serif;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: 3px;
     text-transform: uppercase;
@@ -325,7 +325,7 @@
     background: rgba(232,145,45,0.08);
     border: 1px solid rgba(232,145,45,0.25);
     text-align: center;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--text-bright);
     display: none;
@@ -339,7 +339,7 @@
     100% { opacity: 1; transform: translateY(0); }
   }
 
-  .instruction-banner .val { color: var(--orange-glow); font-size: 24px; }
+  .instruction-banner .val { color: var(--orange-glow); font-size: 26px; }
   .instruction-banner .color-name { font-weight: 900; }
 
   /* ── Buttons ── */
@@ -368,39 +368,29 @@
 
   .btn-wrap { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 24px; }
 
-  .btn-skip {
-    width: 48px; height: 48px; padding: 0;
-    border-radius: 10px;
-    font-size: 18px;
-    letter-spacing: 0;
-    background: var(--bg-card-alt);
-    color: var(--text-dim);
+  .btn-advance {
+    background: none;
     border: 1px solid var(--border-subtle);
-    box-shadow: none;
-    display: inline-flex; align-items: center; justify-content: center;
-    transition: all 0.2s ease;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-dim);
     cursor: not-allowed;
+    transition: all 0.2s ease;
+    opacity: 0.3;
   }
-  .btn-skip:not(:disabled) {
+  .btn-advance:not(:disabled) {
+    opacity: 1;
     color: var(--orange-glow);
     border-color: var(--orange);
     cursor: pointer;
   }
-  .btn-skip:not(:disabled):hover {
-    background: rgba(232,145,45,0.15);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(232,145,45,0.2);
-  }
-  .btn-skip:disabled { opacity: 0.3; }
-
-  /* Fix #11: skip tooltip */
-  .skip-hint {
-    font-size: 10px;
-    color: var(--text-dim);
-    text-align: center;
-    margin-top: 6px;
-    opacity: 0.5;
-    letter-spacing: 1px;
+  .btn-advance:not(:disabled):hover {
+    background: rgba(232,145,45,0.1);
+    border-color: var(--orange-glow);
+    transform: translateY(-1px);
   }
 
   /* ── Color Picker Modal ── */
@@ -586,9 +576,58 @@
 
   /* ── Copypasta ── */
   .copypasta-section { text-align: center; }
-  .copypasta { font-size: 17px; line-height: 1.8; color: var(--text-primary); }
+  .copypasta {
+    font-size: 17px; line-height: 1.8; color: var(--text-primary);
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 16px 20px;
+    border: 1px dashed var(--border-subtle);
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .copypasta:hover {
+    border-color: var(--orange);
+    background: rgba(232,145,45,0.04);
+  }
+  .copypasta:active {
+    transform: scale(0.99);
+  }
   .copypasta p { margin-bottom: 8px; }
-  .copypasta .ps { margin-top: 16px; font-style: italic; color: var(--text-dim); font-size: 15px; }
+  .copypasta .ps { margin-top: 16px; font-style: italic; color: var(--text-dim); font-size: 17px; }
+
+  .copy-hint {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 10px;
+    opacity: 0.5;
+    letter-spacing: 1px;
+    transition: opacity 0.2s;
+  }
+  .copypasta-section:hover .copy-hint { opacity: 0.8; }
+
+  .copy-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--green);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 1px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 200;
+  }
+  .copy-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 
   .footer { text-align: center; margin-top: 24px; font-size: 12px; color: var(--text-dim); letter-spacing: 2px; opacity: 0.4; }
 
@@ -611,8 +650,7 @@
 <div class="container">
   <div class="header">
     <div class="guild-tag">Underground Legends</div>
-    <h1><span class="orange">Mail</span> Roulette</h1>
-    <div class="subtitle">[<span style="color:var(--green-bright)">uL</span>] & [<span style="color:var(--green-bright)">uLT</span>]</div>
+    <h1><span class="orange">UNO</span> Roulette</h1>
   </div>
 
   <div class="divider-bar"></div>
@@ -621,7 +659,7 @@
   <div class="section">
     <div class="dual-panel">
       <div class="panel">
-        <div class="section-label">◈ Recipient ◈ <button class="edit-names-btn" onclick="openNamesModal()" title="Edit name list">✎</button></div>
+        <div class="section-label">◈ Recipient ◈ <!-- <button class="edit-names-btn" onclick="openNamesModal()" title="Edit name list">✎</button> --></div>
         <div class="slot-window" id="slotWindow">
           <div class="slot-highlight"></div>
           <div class="slot-reel" id="slotReel"></div>
@@ -652,23 +690,27 @@
 
     <div class="btn-wrap">
       <button class="btn btn-primary" id="goBtn" onclick="rollBoth()">⚡ Roll Fate ⚡</button>
-      <button class="btn btn-skip" id="skipBtn" onclick="advanceName()" disabled title="Landed on yourself? Skip to the next name (1 use per roll)">▶</button>
     </div>
-    <div class="skip-hint">▶ = skip if you rolled yourself</div>
+    <div class="btn-wrap" style="margin-top:10px">
+      <button class="btn-advance" id="skipBtn" onclick="advanceName()" disabled>Click here to Advance if you rolled yourself</button>
+    </div>
   </div>
 
   <!-- Rules / Copypasta -->
   <div class="section copypasta-section">
     <div class="section-label">◈ The Rules ◈</div>
-    <div style="text-align:center;font-size:13px;color:var(--text-dim);margin-bottom:14px;letter-spacing:1px;">[Include the following text in the mail]</div>
-    <div class="copypasta">
+    <div style="text-align:center;font-size:15px;color:var(--text-dim);margin-bottom:14px;letter-spacing:1px;">[Include the following text in the mail]</div>
+    <div class="copypasta" id="copypasta" onclick="copyRules()" title="Click to copy rules to clipboard">
       <p><strong style="color:var(--red)">Red</strong>, <strong style="color:var(--green-bright)">Green</strong>, <strong style="color:var(--blue)">Blue</strong>, <strong style="color:var(--yellow)">Yellow</strong> — Add on, items/new color but add to current items also and send to someone else —</p>
       <p>Current color — <strong id="currentColor" style="color:var(--red)">Red</strong></p>
       <p class="ps">PS: — IDFK ask Scorch</p>
+      <p style="margin-top:16px"><a href="https://www.squidcereal.com/ul-uno" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--orange);text-decoration:none;font-size:16px;letter-spacing:1px;opacity:0.7;transition:opacity 0.2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">squidcereal.com/ul-uno</a></p>
     </div>
+    <div class="copy-hint">📋 Click to copy</div>
+    <div class="copy-toast" id="copyToast">Copied to clipboard!</div>
   </div>
 
-  <div class="footer">UNDERGROUND LEGENDS — MAIL ROULETTE</div>
+  <div class="footer">UNDERGROUND LEGENDS — UNO ROULETTE</div>
 </div>
 
 <!-- Color Picker Modal -->
@@ -1023,7 +1065,7 @@ function drawBonusCards(count, colorClass, callback) {
 
   setTimeout(() => {
     document.getElementById('bonusTotal').classList.add('visible');
-    showInstructionBanner(total, colorClass);
+    showInstructionBanner(total, colorClass, true);
     if (callback) callback();
   }, 300 + count * 400 + 400);
 }
@@ -1040,15 +1082,17 @@ function updateCurrentColor(colorClass) {
 }
 
 // Fix #8: force re-trigger banner animation
-function showInstructionBanner(value, colorClass) {
+function showInstructionBanner(value, colorClass, isBonus) {
   const mapped = COLOR_MAP[colorClass];
   const banner = document.getElementById('instructionBanner');
   const colorStyle = `color:${mapped.css}`;
 
   if (value === 0) {
-    banner.innerHTML = `Add <span class="val">0</span> materials — lucky! Just pass it along in <span class="color-name" style="${colorStyle}">${mapped.name}</span>`;
-  } else {
+    banner.innerHTML = `Drew <span class="val">0</span> — no changes! Just pass it along in <span class="color-name" style="${colorStyle}">${mapped.name}</span>`;
+  } else if (isBonus) {
     banner.innerHTML = `Add <span class="val">${value}</span> <span class="color-name" style="${colorStyle}">${mapped.name}</span> material${value !== 1 ? 's' : ''} to the mail!`;
+  } else {
+    banner.innerHTML = `Add or Remove <span class="val">${value}</span> <span class="color-name" style="${colorStyle}">${mapped.name}</span> material${value !== 1 ? 's' : ''} to the mail!`;
   }
 
   // Force animation re-trigger
@@ -1159,6 +1203,36 @@ function spawnSparkles(container) {
     container.appendChild(spark);
     setTimeout(() => spark.remove(), 1000);
   }
+}
+
+// ── Copy Rules to Clipboard ──
+function copyRules() {
+  const el = document.getElementById('copypasta');
+  // Extract text content, skipping the link
+  const lines = [];
+  el.querySelectorAll('p').forEach(p => {
+    // Skip the link paragraph
+    if (p.querySelector('a')) return;
+    lines.push(p.textContent.trim());
+  });
+  const text = lines.join('\n') + '\nhttps://www.squidcereal.com/ul-uno';
+
+  navigator.clipboard.writeText(text).then(() => {
+    const toast = document.getElementById('copyToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const toast = document.getElementById('copyToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  });
 }
 
 // ── Init ──
