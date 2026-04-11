@@ -401,6 +401,13 @@ nav ul a.settling {
   justify-content: center;
   position: relative;
   overflow: hidden;
+  filter: saturate(0.1) brightness(0.6) sepia(1) hue-rotate(180deg);
+  opacity: 0.5;
+  transition: filter 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s, opacity 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s;
+}
+.game-card.reveal.visible .card-banner {
+  filter: none;
+  opacity: 1;
 }
 .card-content {
   padding: 1.5rem 1.8rem 0;
@@ -738,9 +745,25 @@ footer .copy span { color: var(--green); }
   opacity: 1;
   transform: translate(0,0);
 }
+.game-card.reveal {
+  opacity: 1;
+  transform: none;
+}
+.game-card.reveal .card-content,
+.game-card.reveal .card-actions {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 1.3s cubic-bezier(0.16,1,0.3,1) 0.2s, transform 0.5s cubic-bezier(0.16,1,0.3,1) 0.2s;
+}
+.game-card.reveal.visible .card-content,
+.game-card.reveal.visible .card-actions {
+  opacity: 1;
+  transform: translateX(0);
+}
 
 /* stagger children */
 .stagger > * { transition-delay: calc(var(--i,0) * 0.1s); }
+.stagger > .game-card { transition-delay: 0s; }
 
 /* ===== MOBILE MENU ===== */
 .mobile-hamburger {
@@ -1081,7 +1104,21 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+const cardObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.reveal').forEach(el => {
+  if (el.classList.contains('game-card')) {
+    cardObserver.observe(el);
+  } else {
+    observer.observe(el);
+  }
+});
 
 const navBar = document.getElementById('navBar');
 const topLinks = document.getElementById('topLinks');
