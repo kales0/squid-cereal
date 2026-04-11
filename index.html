@@ -1220,6 +1220,7 @@ document.querySelectorAll('.offcanvas-link').forEach(link => {
   let heroH = hero.offsetHeight;
   let heroW = hero.offsetWidth;
   let scale = Math.min(heroW / 1200, 1);
+  let sizeBoost = window.innerWidth >= 2100 ? 1.35 : 1;
   let running = true;
   let rafId = null;
   let pausedAt = 0;
@@ -1235,6 +1236,7 @@ document.querySelectorAll('.offcanvas-link').forEach(link => {
     heroH = hero.offsetHeight;
     heroW = hero.offsetWidth;
     scale = Math.min(heroW / 1200, 1);
+    sizeBoost = window.innerWidth >= 2100 ? 1.35 : 1;
   }, { passive: true });
 
   function shouldRun() { return heroVisible && tabVisible; }
@@ -1350,9 +1352,9 @@ document.querySelectorAll('.offcanvas-link').forEach(link => {
       const role = roles[i];
       setTimeout(() => {
         if (!running) return;
-        const size = role === 'large' ? (20 + Math.random() * 5) * scale
-                   : role === 'medium' ? (10 + Math.random() * 8) * scale
-                   : 4 + Math.random() * 4;
+        const size = role === 'large' ? (20 + Math.random() * 5) * scale * sizeBoost
+                   : role === 'medium' ? (10 + Math.random() * 8) * scale * sizeBoost
+                   : (4 + Math.random() * 4) * sizeBoost;
         const x = originX + (Math.random() - 0.5) * 3;
         addParticle(x, size, 1, 7 - size * 0.05 + Math.random() * 0.5, (6 + Math.random() * 12) * scale * Math.min(1, 10 / size), Math.random() * Math.PI * 2, 4);
       }, i * (300 + Math.random() * 200));
@@ -1375,7 +1377,7 @@ document.querySelectorAll('.offcanvas-link').forEach(link => {
   function spawnAmbient() {
     if (!running) return;
     const x = ambientX();
-    const size = 5 + Math.random() * 4;
+    const size = (5 + Math.random() * 4) * sizeBoost;
     addParticle(x, size, 1, 7 - size * 0.05 + Math.random() * 0.5, (6 + Math.random() * 12) * scale * Math.min(1, 10 / size), Math.random() * Math.PI * 2, 4);
   }
 
@@ -1398,7 +1400,7 @@ document.querySelectorAll('.offcanvas-link').forEach(link => {
   // Pre-seed
   for (let i = 0; i < 10; i++) {
     const x = ambientX();
-    const size = 5 + Math.random() * 4;
+    const size = (5 + Math.random() * 4) * sizeBoost;
     const duration = 7 - size * 0.05 + Math.random() * 0.5;
     const age = Math.random() * 0.85 * duration;
     addParticle(x, size, 1, duration, (6 + Math.random() * 12) * scale * Math.min(1, 10 / size), Math.random() * Math.PI * 2, 4, age);
