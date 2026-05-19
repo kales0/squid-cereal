@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ULC Dhuum Pick Up Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Fira+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --bg-card: #161616;
+    --bg-card-alt: #1c1c1c;
+    --bg-input: #111111;
+    --bg-hover: #222222;
+    --border: #2a2a2a;
+    --border-hi: #3a3a3a;
+    --text: #b8b8b8;
+    --text-dim: #666666;
+    --text-bright: #e0e0e0;
+    --text-white: #f0f0f0;
+    --orange: #e8912a;
+    --orange-dim: #c47a22;
+    --orange-glow: rgba(232, 145, 42, 0.12);
+    --orange-dark: #3d2a10;
+    --green: #5cb85c;
+    --green-dim: #1e3a1e;
+    --red: #d9534f;
+    --red-dim: #3a1515;
+    --lime: #b4d433;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 4rem;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 3px solid var(--orange);
+  }
+
+  .header-text h1 {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-white);
+    line-height: 1.15;
+  }
+
+  .header-text h1 .accent { color: var(--orange); }
+
+  .header-text p {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-top: 0.15rem;
+  }
+
+  .tag {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: var(--orange);
+    color: #000;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  /* ── Input ── */
+  .input-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .input-box label {
+    display: block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 120px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-bright);
+    font-family: 'Fira Mono', monospace;
+    font-size: 0.78rem;
+    padding: 0.7rem 0.9rem;
+    resize: vertical;
+    transition: border-color 0.2s;
+    line-height: 1.65;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: var(--orange);
+    box-shadow: 0 0 0 2px var(--orange-glow);
+  }
+
+  textarea::placeholder { color: #444; }
+
+  .actions {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.85rem;
+    align-items: center;
+  }
+
+  button {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 4px;
+    padding: 0.6rem 1.4rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-go {
+    background: var(--orange);
+    color: #000;
+  }
+
+  .btn-go:hover:not(:disabled) {
+    background: var(--orange-dim);
+  }
+
+  .btn-go:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .btn-clear {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  .btn-clear:hover { border-color: var(--border-hi); color: var(--text); }
+
+  .status {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-left: auto;
+    font-weight: 300;
+  }
+
+  .status.err { color: var(--red); }
+
+  /* ── Progress ── */
+  .log {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.25rem;
+    max-height: 180px;
+    overflow-y: auto;
+    font-family: 'Fira Mono', monospace;
+    font-size: 0.7rem;
+    line-height: 1.75;
+    display: none;
+  }
+
+  .log.on { display: block; }
+  .ll { color: var(--text-dim); }
+  .ll.ok { color: var(--green); }
+  .ll.w { color: var(--orange); }
+  .ll.e { color: var(--red); }
+  .ll .t { opacity: 0.4; margin-right: 0.4rem; }
+
+  /* ── Results ── */
+  #results { display: none; }
+  #results.on { display: block; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    text-align: center;
+  }
+
+  .stat .n {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-white);
+    line-height: 1.1;
+  }
+
+  .stat .n.good { color: var(--green); }
+  .stat .n.bad { color: var(--red); }
+
+  .stat .l {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-top: 0.2rem;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+  }
+
+  /* ── Tables ── */
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-head h3 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-bright);
+  }
+
+  .copy-btn {
+    font-family: 'Fira Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 400;
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 3px;
+    padding: 0.3rem 0.7rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .copy-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead th {
+    background: var(--bg-card-alt);
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  thead th.sort { cursor: pointer; user-select: none; }
+  thead th.sort:hover { color: var(--text-bright); }
+  thead th.act { color: var(--orange); }
+
+  tbody tr {
+    border-bottom: 1px solid #1f1f1f;
+    transition: background 0.1s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--bg-hover); }
+
+  td {
+    padding: 0.55rem 0.9rem;
+    font-size: 0.82rem;
+  }
+
+  td.acct { font-weight: 600; color: var(--text-bright); }
+
+  td.num {
+    font-family: 'Fira Mono', monospace;
+    font-weight: 500;
+    text-align: center;
+    min-width: 50px;
+  }
+
+  td.num.z { color: var(--green); }
+  td.num.nz { color: var(--red); }
+
+  td.brk {
+    font-family: 'Fira Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+  }
+
+  .lt {
+    display: inline-block;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.1rem 0.4rem;
+    margin: 0.12rem 0.2rem 0.12rem 0;
+    white-space: nowrap;
+  }
+
+  .lt.pu { border-color: var(--red-dim); color: var(--red); }
+
+  .lt a { color: inherit; text-decoration: none; }
+  .lt a:hover { text-decoration: underline; }
+
+  td a { color: var(--orange); text-decoration: none; }
+  td a:hover { text-decoration: underline; }
+  td.ok { color: var(--green); }
+  td.fail { color: var(--red); }
+
+  .idx {
+    font-family: 'Fira Mono', monospace;
+    color: var(--text-dim);
+    font-size: 0.7rem;
+  }
+
+  .clean-msg {
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--green);
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .warn-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.15rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.8rem;
+    line-height: 1.7;
+  }
+
+  .warn-box p { color: var(--text-dim); }
+  .warn-box strong { color: var(--text); }
+  .warn-box code {
+    background: var(--bg);
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+  }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 1rem 0.75rem 3rem; }
+    .header h1 { font-size: 1.2rem; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .panel { overflow-x: auto; }
+    table { min-width: 550px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="header-text">
+      <h1>Dhuum <span class="accent">Pick Up</span> Tracker</h1>
+      <p>Paste dps.report links &bull; Track who got picked up</p>
+    </div>
+  </div>
+
+  <div class="input-box">
+    <label for="urls">dps.report URLs (one per line)</label>
+    <textarea id="urls" placeholder="https://dps.report/tbAE-20260516-145446_dhuum&#10;https://dps.report/r6cJ-20260516-150649_dhuum"></textarea>
+    <div class="actions">
+      <button class="btn-go" id="goBtn" onclick="analyze()">Analyze</button>
+      <button class="btn-clear" onclick="clearAll()">Clear</button>
+      <span class="status" id="status"></span>
+    </div>
+  </div>
+
+  <div class="log" id="log"></div>
+  <div id="results"></div>
+</div>
+
+<script>
+const DOMAINS = ['b.dps.report', 'dps.report'];
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function addLog(msg, c = '') {
+  const el = document.getElementById('log');
+  el.classList.add('on');
+  const t = new Date().toLocaleTimeString();
+  el.innerHTML += `<div class="ll ${c}"><span class="t">${t}</span>${esc(msg)}</div>`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function setSt(msg, e = false) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status' + (e ? ' err' : '');
+}
+
+function parseUrls(txt) {
+  return txt.split(/[\n\r]+/).map(s => s.trim()).filter(s => s.length && s.includes('dps.report/'));
+}
+
+function sid(url) {
+  const m = url.match(/dps\.report\/([^\s?#]+)/);
+  return m ? m[1] : url;
+}
+
+function extractId(url) {
+  const m = url.match(/(?:dps\.report|b\.dps\.report)\/([A-Za-z0-9_-]+)/);
+  return m ? m[1] : null;
+}
+
+async function fetchJson(origUrl) {
+  const id = extractId(origUrl);
+  const candidates = [];
+  for (const d of DOMAINS) {
+    if (id) candidates.push(`https://${d}/getJson?id=${encodeURIComponent(id)}`);
+    candidates.push(`https://${d}/getJson?permalink=${encodeURIComponent(origUrl)}`);
+  }
+  for (const u of candidates) {
+    try {
+      const r = await fetch(u);
+      if (!r.ok) { addLog(`  ${u.split('/getJson')[0]} → HTTP ${r.status}`, 'w'); continue; }
+      const txt = await r.text();
+      try {
+        const data = JSON.parse(txt);
+        if (data && data.error && !data.players) { addLog(`  API: ${data.error}`, 'w'); continue; }
+        return data;
+      } catch { addLog(`  Bad JSON`, 'w'); }
+    } catch (e) { addLog(`  ${u.split('/getJson')[0]} → ${e.message}`, 'w'); }
+  }
+  return null;
+}
+
+function f(obj, a, b) {
+  if (obj[a] !== undefined) return obj[a];
+  if (obj[b] !== undefined) return obj[b];
+}
+
+async function analyze() {
+  const btn = document.getElementById('goBtn');
+  btn.disabled = true;
+  document.getElementById('log').innerHTML = '';
+  document.getElementById('log').classList.add('on');
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('results').classList.remove('on');
+  setSt('');
+
+  const urls = parseUrls(document.getElementById('urls').value);
+  if (!urls.length) { setSt('No valid URLs found.', true); btn.disabled = false; return; }
+
+  addLog(`Found ${urls.length} URL(s).`);
+  const results = [];
+
+  for (let i = 0; i < urls.length; i++) {
+    const url = urls[i], id = sid(url);
+    setSt(`${i + 1} / ${urls.length}...`);
+    addLog(`[${i + 1}/${urls.length}] ${id}...`);
+
+    const data = await fetchJson(url);
+    if (!data) {
+      addLog(`  \u2717 Failed`, 'e');
+      results.push({ url, id, err: true, meta: null, pu: [], accts: [] });
+      continue;
+    }
+
+    // Player map: character name → account name
+    const map = {};
+    const players = f(data, 'players', 'Players') || [];
+    const accts = [];
+    for (const p of players) {
+      const cn = f(p, 'name', 'Name'), an = f(p, 'account', 'Account');
+      if (cn && an) { map[cn] = an; accts.push(an); }
+    }
+
+    // Find & deduplicate Echo PU mechanic
+    const mechs = f(data, 'mechanics', 'Mechanics') || [];
+    let pu = [];
+
+    for (const m of mechs) {
+      const nm = f(m, 'name', 'Name') || '';
+      if (nm === 'Echo PU') {
+        const raw = f(m, 'mechanicsData', 'MechanicsData') || [];
+        const icd = f(m, 'internalCooldown', 'InternalCooldown') || 10000;
+        addLog(`  Echo PU: ${raw.length} ticks, icd=${icd}ms`, '');
+
+        // Group by actor
+        const byA = {};
+        for (const ev of raw) {
+          const a = f(ev, 'actor', 'Actor') || '?';
+          if (!byA[a]) byA[a] = [];
+          byA[a].push(f(ev, 'time', 'Time') || 0);
+        }
+
+        // Count episodes per actor using internalCooldown
+        for (const [actor, times] of Object.entries(byA)) {
+          times.sort((a, b) => a - b);
+          let ep = 1;
+          for (let t = 1; t < times.length; t++) {
+            if (times[t] - times[t - 1] > icd) ep++;
+          }
+          pu.push({ actor, account: map[actor] || actor, count: ep });
+        }
+        break;
+      }
+    }
+
+    const meta = {
+      success: f(data, 'success', 'Success'),
+      duration: f(data, 'duration', 'Duration') || '',
+    };
+
+    const total = pu.reduce((s, e) => s + e.count, 0);
+    addLog(total === 0 ? `  \u2713 Clean` : `  \u2713 ${total} pickup(s), ${pu.length} player(s)`, total === 0 ? 'ok' : 'w');
+
+    results.push({ url, id, err: false, meta, pu, accts });
+    if (i < urls.length - 1) await new Promise(r => setTimeout(r, 300));
+  }
+
+  btn.disabled = false;
+  setSt(`Done \u2014 ${results.length} log(s).`);
+  addLog('Done.', 'ok');
+  render(results);
+}
+
+function render(results) {
+  const el = document.getElementById('results');
+  const ok = results.filter(r => !r.err);
+
+  // Aggregate
+  const ad = {}; // account → { total, pulls, perLog }
+  for (const r of ok) {
+    const counts = {};
+    for (const e of r.pu) counts[e.account] = (counts[e.account] || 0) + e.count;
+    const la = new Set(r.accts);
+    for (const a of la) {
+      if (!ad[a]) ad[a] = { total: 0, pulls: 0, perLog: [] };
+      const c = counts[a] || 0;
+      ad[a].pulls++;
+      ad[a].perLog.push({ id: r.id, url: r.url, count: c });
+      ad[a].total += c;
+    }
+    for (const [a, c] of Object.entries(counts)) {
+      if (!la.has(a)) {
+        if (!ad[a]) ad[a] = { total: 0, pulls: 0, perLog: [] };
+        ad[a].pulls++;
+        ad[a].perLog.push({ id: r.id, url: r.url, count: c });
+        ad[a].total += c;
+      }
+    }
+  }
+
+  const sorted = Object.entries(ad).filter(([, v]) => v.total > 0).sort((a, b) => b[1].total - a[1].total);
+  const totPU = sorted.reduce((s, [, v]) => s + v.total, 0);
+  const clean = ok.filter(r => r.pu.length === 0).length;
+  const failed = results.filter(r => r.err).length;
+
+  let h = `
+    <div class="stats-row">
+      <div class="stat"><div class="n">${ok.length}</div><div class="l">Logs</div></div>
+      <div class="stat"><div class="n ${totPU ? 'bad' : 'good'}">${totPU}</div><div class="l">Total Pickups</div></div>
+      <div class="stat"><div class="n good">${clean}</div><div class="l">Clean Logs</div></div>
+      <div class="stat"><div class="n ${sorted.length ? 'bad' : 'good'}">${sorted.length}</div><div class="l">Players Hit</div></div>
+    </div>`;
+
+  if (failed > 0) {
+    h += `<div class="warn-box"><p style="color:var(--orange);">\u26A0 ${failed} log(s) failed to fetch.</p>`;
+    if (failed === results.length) {
+      h += `<p>All logs failed \u2014 likely Cloudflare blocking <code>file://</code> origin.<br>
+        <strong>Fix:</strong> serve via <code>python -m http.server 8000</code> then open <code>http://localhost:8000</code></p>`;
+    }
+    h += `</div>`;
+  }
+
+  // PU table
+  if (sorted.length > 0) {
+    h += `<div class="panel"><div class="panel-head">
+      <h3>Echo PU Results</h3>
+      <div style="display:flex;gap:0.4rem;">
+        <button class="copy-btn" onclick="copyDiscord()">Copy for Discord</button>
+        <button class="copy-btn" onclick="copyCSV()">Copy CSV</button>
+      </div>
+    </div><table id="mt"><thead><tr>
+      <th class="sort" onclick="sortT(0)">Account</th>
+      <th class="sort act" onclick="sortT(1)" data-d="desc">Pickups <span class="sa">\u25BC</span></th>
+      <th class="sort" onclick="sortT(2)">Pulls</th>
+      <th>Per Log</th>
+    </tr></thead><tbody>`;
+
+    for (const [acct, info] of sorted) {
+      const tags = info.perLog.filter(p => p.count > 0)
+        .map(p => `<span class="lt pu"><a href="${esc(p.url)}" target="_blank">${esc(p.id)}</a>: ${p.count}</span>`).join('');
+      h += `<tr><td class="acct">${esc(acct)}</td><td class="num nz">${info.total}</td><td class="num" style="color:var(--text)">${info.pulls}</td><td class="brk">${tags}</td></tr>`;
+    }
+    h += `</tbody></table></div>`;
+  } else {
+    h += `<div class="panel"><div class="clean-msg">\u2714 No Echo PU events. Clean runs!</div></div>`;
+  }
+
+  // Logs table
+  h += `<div class="panel"><div class="panel-head"><h3>Processed Logs</h3></div>
+    <table><thead><tr><th>#</th><th>Log</th><th>Duration</th><th>Result</th><th>Echo PU</th></tr></thead><tbody>`;
+
+  for (let i = 0; i < results.length; i++) {
+    const r = results[i];
+    if (r.err) {
+      h += `<tr><td class="idx">${i+1}</td><td><a href="${esc(r.url)}" target="_blank">${esc(r.id)}</a></td><td>\u2014</td><td class="fail">Error</td><td>\u2014</td></tr>`;
+    } else {
+      const m = r.meta;
+      const sT = m.success === true ? 'Kill' : m.success === false ? 'Wipe' : '?';
+      const sC = m.success === true ? 'ok' : m.success === false ? 'fail' : '';
+      const pn = r.pu.reduce((s, e) => s + e.count, 0);
+      h += `<tr><td class="idx">${i+1}</td><td><a href="${esc(r.url)}" target="_blank">${esc(r.id)}</a></td>
+        <td style="font-family:'Fira Mono',monospace;font-size:0.78rem;">${esc(m.duration)}</td>
+        <td class="${sC}">${sT}</td><td class="num ${pn?'nz':'z'}">${pn}</td></tr>`;
+    }
+  }
+
+  h += `</tbody></table></div>`;
+  el.innerHTML = h;
+  el.classList.add('on');
+  window._sorted = sorted;
+}
+
+function copyDiscord() {
+  if (!window._sorted || !window._sorted.length) return;
+  let txt = '**Echo PU Report**\n```\n';
+  for (const [acct, info] of window._sorted) {
+    const avg = (info.total / info.pulls).toFixed(2);
+    txt += `${acct} - ${info.total} pick-up${info.total !== 1 ? 's' : ''} in ${info.pulls} pulls (${avg}/pull)\n`;
+  }
+  txt += '```';
+  navigator.clipboard.writeText(txt).then(() => flashBtn(event.target, 'Copied!'));
+}
+
+function copyCSV() {
+  if (!window._sorted) return;
+  let csv = 'Account,Echo PU,Pulls\n';
+  for (const [acct, info] of window._sorted) csv += `"${acct}",${info.total},${info.pulls}\n`;
+  navigator.clipboard.writeText(csv).then(() => flashBtn(event.target, 'Copied!'));
+}
+
+function flashBtn(btn, msg) {
+  const orig = btn.textContent;
+  btn.textContent = msg;
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+}
+
+function sortT(col) {
+  const t = document.getElementById('mt');
+  if (!t) return;
+  const tb = t.querySelector('tbody'), rows = Array.from(tb.querySelectorAll('tr'));
+  const ths = t.querySelectorAll('thead th.sort'), th = ths[col];
+  const flip = th.dataset.d === 'desc' ? 'asc' : 'desc';
+  ths.forEach(h => { h.classList.remove('act'); h.dataset.d = ''; });
+  th.classList.add('act'); th.dataset.d = flip;
+  const sa = th.querySelector('.sa');
+  if (sa) sa.textContent = flip === 'asc' ? '\u25B2' : '\u25BC';
+
+  rows.sort((a, b) => {
+    if (col === 0) {
+      const x = a.cells[0].textContent.toLowerCase(), y = b.cells[0].textContent.toLowerCase();
+      return flip === 'asc' ? x.localeCompare(y) : y.localeCompare(x);
+    }
+    const ci = col === 1 ? 1 : 2;
+    const x = parseInt(a.cells[ci].textContent) || 0, y = parseInt(b.cells[ci].textContent) || 0;
+    return flip === 'asc' ? x - y : y - x;
+  });
+  rows.forEach(r => tb.appendChild(r));
+}
+
+function clearAll() {
+  document.getElementById('urls').value = '';
+  document.getElementById('log').innerHTML = '';
+  document.getElementById('log').classList.remove('on');
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('results').classList.remove('on');
+  setSt('');
+}
+</script>
+</body>
+</html>
